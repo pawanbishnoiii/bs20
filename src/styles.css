@@ -561,43 +561,51 @@ body {
 
 /* ---------- Night mode ---------- */
 .dark {
-  --background: #0b1020;
-  --foreground: #f4f7fc;
-  --panel: #151d30;
-  --brand: #a5b4fc;
-  --brand-foreground: #ffffff;
-  --warm: #fbbf24;
+  --background: #101014;
+  --foreground: #f7f4ef;
+  --panel: #1a1a20;
+  --brand: #f7f4ef;
+  --brand-foreground: #14151a;
+  --warm: #ffe8a3;
 
-  --card: #151d30;
-  --card-foreground: #f4f7fc;
-  --popover: #151d30;
-  --popover-foreground: #f4f7fc;
-  --primary: #a5b4fc;
-  --primary-foreground: #0b1020;
-  --secondary: #202a40;
-  --secondary-foreground: #f4f7fc;
-  --muted: #202a40;
-  --muted-foreground: #aab6cc;
-  --accent: #1e213a;
-  --accent-foreground: #c7d2fe;
-  --destructive: #fb7185;
-  --destructive-foreground: #0b0d12;
-  --border: #2a354b;
+  --card: #1a1a20;
+  --card-foreground: #f7f4ef;
+  --popover: #1a1a20;
+  --popover-foreground: #f7f4ef;
+  --primary: #f7f4ef;
+  --primary-foreground: #14151a;
+  --secondary: #24242c;
+  --secondary-foreground: #f7f4ef;
+  --muted: #24242c;
+  --muted-foreground: #a3a3ad;
+  --accent: #262232;
+  --accent-foreground: #e6dcfb;
+  --destructive: #f08a5d;
+  --destructive-foreground: #14151a;
+  --border: #2e2e38;
   --input: rgb(255 255 255 / 0.12);
-  --ring: rgb(99 102 241 / 0.45);
+  --ring: rgb(59 130 246 / 0.5);
 
-  --bg-base: #151d30;
-  --bg-elevated: #202a40;
-  --border-subtle: #2a354b;
-  --accent-start: #a5b4fc;
-  --accent-end: #a5b4fc;
-  --accent-ai: #f472b6;
-  --text-primary: #f4f7fc;
-  --text-muted: #aab6cc;
+  --bg-base: #1a1a20;
+  --bg-elevated: #24242c;
+  --border-subtle: #2e2e38;
+  --accent-start: #f7f4ef;
+  --accent-end: #cfcbc4;
+  --accent-active: #6f9dff;
+  --accent-ai: #b6a0ef;
+  --activity-reading: #3b5680;
+  --activity-revision: #453a66;
+  --activity-class: #1e4a3c;
+  --activity-test: #544515;
+  --state-hit: #6fc79c;
+  --state-partial: #e3c55f;
+  --state-missed: #e09ab8;
+  --text-primary: #f7f4ef;
+  --text-muted: #a3a3ad;
 
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 12px 32px -18px rgb(0 0 0 / 0.8);
   --shadow-hover: 0 2px 8px rgb(0 0 0 / 0.55), 0 20px 40px -20px rgb(0 0 0 / 0.9);
-  --shadow-glow: 0 0 0 6px rgb(99 102 241 / 0.22);
+  --shadow-glow: 0 0 0 6px rgb(59 130 246 / 0.24);
 }
 
 .dark .app-backdrop {
