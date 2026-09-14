@@ -210,6 +210,19 @@ function TodayPage() {
     [all, subjects.data, subjWindow],
   );
 
+  const attempts = useQuery({ queryKey: ["attempts"], queryFn: () => fetchAttempts() });
+  const perf = useMemo(
+    () =>
+      subjectPerformance(
+        subjects.data ?? [],
+        all,
+        attempts.data ?? [],
+        subjWindow.since,
+        subjWindow.scale,
+      ),
+    [subjects.data, all, attempts.data, subjWindow],
+  );
+
   const saveSubjectTarget = useMutation({
     mutationFn: async (v: { id: string; hours: number }) =>
       updateSubject(v.id, { weekly_target_hours: v.hours }),
