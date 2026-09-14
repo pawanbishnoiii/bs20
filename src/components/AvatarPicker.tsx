@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 async function fetchPresets() {
   const { data, error } = await supabase
     .from("avatar_presets")
-    .select("id,label,url")
+    .select("id,name,image_url")
     .eq("is_active", true)
     .order("sort_order", { ascending: true });
   if (error) throw new Error(error.message);
@@ -164,13 +164,13 @@ export function AvatarPicker({
               <button
                 key={p.id}
                 type="button"
-                onClick={() => void apply(p.url)}
-                title={p.label}
+                onClick={() => void apply(p.image_url)}
+                title={p.name}
                 className={`size-12 overflow-hidden rounded-full ring-2 transition-transform duration-200 hover:-translate-y-0.5 ${
-                  avatarUrl === p.url ? "ring-brand" : "ring-border"
+                  avatarUrl === p.image_url ? "ring-brand" : "ring-border"
                 }`}
               >
-                <img src={p.url} alt={p.label} className="size-full object-cover" />
+                <img src={p.image_url} alt={p.name} className="size-full object-cover" />
               </button>
             ))}
           </div>
