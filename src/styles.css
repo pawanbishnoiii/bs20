@@ -63,36 +63,36 @@
   --radius: 0.75rem; /* 12px — buttons, chips, controls */
   --radius-card: 28px; /* cards, panels */
   --font-display-family: "Inter", "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
-  --font-heading-family: "Inter", "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
-  --font-mono-family: "JetBrains Mono", ui-monospace, monospace;
+  --font-heading-family: "Manrope", "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
+  --font-mono-family: "Inter", ui-monospace, monospace;
 
-  /* Bright study desk — cool canvas, deep ink actions, sky blue accent. */
-  --background: #f6f4ff;
-  --foreground: #182230;
+  /* Warm paper canvas, layered white cards, pastel accents, near-black ink. */
+  --background: #fbf8f3;
+  --foreground: #14151a;
   --panel: #ffffff;
-  --brand: #5b21f0;
-  --brand-foreground: oklch(1 0 0);
-  --warm: oklch(0.82 0.16 82);
+  --brand: #14151a;
+  --brand-foreground: #ffffff;
+  --warm: #e0a90a;
 
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #14151a;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #5b21f0;
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0.02 240);
-  --secondary-foreground: #0f172a;
-  --muted: oklch(0.95 0.014 245);
-  --muted-foreground: #596579;
-  --accent: oklch(0.9 0.09 292);
-  --accent-foreground: oklch(0.42 0.16 246);
-  --destructive: #b42318;
+  --popover-foreground: #14151a;
+  --primary: #14151a;
+  --primary-foreground: #ffffff;
+  --secondary: #f2eee7;
+  --secondary-foreground: #14151a;
+  --muted: #f2eee7;
+  --muted-foreground: #6b6b76;
+  --accent: #ece4fb;
+  --accent-foreground: #14151a;
+  --destructive: #c2410c;
   --destructive-foreground: #ffffff;
   --success: #0f766e;
   --warning: #b45309;
-  --border: #e3e7ef;
-  --input: rgb(15 23 42 / 0.12);
-  --ring: color-mix(in oklab, var(--brand) 36%, transparent);
+  --border: #ebe5da;
+  --input: rgb(20 21 26 / 0.12);
+  --ring: color-mix(in oklab, #2563eb 45%, transparent);
 }
 
 @layer base {
@@ -191,23 +191,23 @@
 
 /* Pastel accent tints used across bento cards and chips. */
 :root {
-  --pop-lavender: oklch(0.88 0.11 292);
-  --pop-sky: oklch(0.88 0.12 235);
-  --pop-lilac: oklch(0.9 0.09 315);
-  --pop-mint: oklch(0.88 0.15 155);
-  --pop-mustard: oklch(0.9 0.17 92);
-  --pop-coral: oklch(0.87 0.14 22);
-  --pop-ink: oklch(0.2 0.035 255);
+  --pop-lavender: #cbbbf3;
+  --pop-sky: #a9c9ff;
+  --pop-lilac: #f3c7ec;
+  --pop-mint: #c8f2df;
+  --pop-mustard: #ffe8a3;
+  --pop-coral: #f3c7ec;
+  --pop-ink: #14151a;
 }
 
 .dark {
-  --pop-lavender: #2a2547;
-  --pop-sky: #16304a;
-  --pop-lilac: #2c2340;
-  --pop-mint: #22381d;
-  --pop-mustard: #3d3218;
-  --pop-coral: #3d2030;
-  --pop-ink: #0b0d12;
+  --pop-lavender: #332c4d;
+  --pop-sky: #1d2e4a;
+  --pop-lilac: #3d2b3b;
+  --pop-mint: #1e3a31;
+  --pop-mustard: #3c3319;
+  --pop-coral: #3d2b3b;
+  --pop-ink: #0e0f13;
 }
 
 /** Big rounded sheet with a soft pastel wash — hero / feature blocks. */
@@ -326,23 +326,30 @@
 :root {
   /* surfaces — exactly two elevation levels */
   --bg-base: #ffffff;
-  --bg-elevated: #eef2ff;
-  --border-subtle: #e3e7ef;
+  --bg-elevated: #f6f2ea;
+  --border-subtle: #ebe5da;
   --blur-glass: 20px;
 
-  /* accent — indigo → blue, primary CTA / active nav / fills / chart line */
-  --accent-start: #5b21f0;
-  --accent-end: #a021f0;
-  --accent-ai: oklch(0.67 0.18 330);
+  /* accent — near-black ink for primary actions, strong blue for active state */
+  --accent-start: #14151a;
+  --accent-end: #3a3b44;
+  --accent-active: #2563eb;
+  --accent-ai: #8b6fd6;
+
+  /* activity colours — reading / revision / class / test */
+  --activity-reading: #a9c9ff;
+  --activity-revision: #cbbbf3;
+  --activity-class: #c8f2df;
+  --activity-test: #ffe8a3;
 
   /* semantic states */
-  --state-hit: #a3e635;
-  --state-partial: #facc15;
-  --state-missed: #f472b6;
+  --state-hit: #55b487;
+  --state-partial: #e0a90a;
+  --state-missed: #d9789f;
 
   /* text */
-  --text-primary: #182230;
-  --text-muted: #596579;
+  --text-primary: #14151a;
+  --text-muted: #6b6b76;
 
   /* spacing scale */
   --space-1: 4px;
@@ -353,9 +360,9 @@
   --space-8: 32px;
 
   /* elevation — soft shadows instead of harsh borders */
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 8px 24px -16px rgb(15 23 42 / 0.18);
-  --shadow-hover: 0 2px 6px rgb(15 23 42 / 0.07), 0 16px 32px -18px rgb(15 23 42 / 0.24);
-  --shadow-glow: 0 0 0 8px rgb(139 92 246 / 0.16);
+  --shadow-card: 0 1px 2px rgb(20 21 26 / 0.04), 0 10px 28px -18px rgb(20 21 26 / 0.2);
+  --shadow-hover: 0 2px 6px rgb(20 21 26 / 0.06), 0 18px 36px -20px rgb(20 21 26 / 0.26);
+  --shadow-glow: 0 0 0 8px rgb(37 99 235 / 0.14);
 
   /* motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -365,13 +372,13 @@
   --dur-slow: 0.8s;
 
   /* map core surfaces onto the light palette */
-  --background: #f6f4ff;
-  --foreground: #182230;
+  --background: #fbf8f3;
+  --foreground: #14151a;
   --panel: #ffffff;
   --card: #ffffff;
   --popover: #ffffff;
-  --muted-foreground: #596579;
-  --border: #e3e7ef;
+  --muted-foreground: #6b6b76;
+  --border: #ebe5da;
 }
 
 /* Ambient app backdrop: fine slate grid + one soft indigo wash at the top. */
@@ -554,43 +561,51 @@ body {
 
 /* ---------- Night mode ---------- */
 .dark {
-  --background: #0b1020;
-  --foreground: #f4f7fc;
-  --panel: #151d30;
-  --brand: #a5b4fc;
-  --brand-foreground: #ffffff;
-  --warm: #fbbf24;
+  --background: #101014;
+  --foreground: #f7f4ef;
+  --panel: #1a1a20;
+  --brand: #f7f4ef;
+  --brand-foreground: #14151a;
+  --warm: #ffe8a3;
 
-  --card: #151d30;
-  --card-foreground: #f4f7fc;
-  --popover: #151d30;
-  --popover-foreground: #f4f7fc;
-  --primary: #a5b4fc;
-  --primary-foreground: #0b1020;
-  --secondary: #202a40;
-  --secondary-foreground: #f4f7fc;
-  --muted: #202a40;
-  --muted-foreground: #aab6cc;
-  --accent: #1e213a;
-  --accent-foreground: #c7d2fe;
-  --destructive: #fb7185;
-  --destructive-foreground: #0b0d12;
-  --border: #2a354b;
+  --card: #1a1a20;
+  --card-foreground: #f7f4ef;
+  --popover: #1a1a20;
+  --popover-foreground: #f7f4ef;
+  --primary: #f7f4ef;
+  --primary-foreground: #14151a;
+  --secondary: #24242c;
+  --secondary-foreground: #f7f4ef;
+  --muted: #24242c;
+  --muted-foreground: #a3a3ad;
+  --accent: #262232;
+  --accent-foreground: #e6dcfb;
+  --destructive: #f08a5d;
+  --destructive-foreground: #14151a;
+  --border: #2e2e38;
   --input: rgb(255 255 255 / 0.12);
-  --ring: rgb(99 102 241 / 0.45);
+  --ring: rgb(59 130 246 / 0.5);
 
-  --bg-base: #151d30;
-  --bg-elevated: #202a40;
-  --border-subtle: #2a354b;
-  --accent-start: #a5b4fc;
-  --accent-end: #a5b4fc;
-  --accent-ai: #f472b6;
-  --text-primary: #f4f7fc;
-  --text-muted: #aab6cc;
+  --bg-base: #1a1a20;
+  --bg-elevated: #24242c;
+  --border-subtle: #2e2e38;
+  --accent-start: #f7f4ef;
+  --accent-end: #cfcbc4;
+  --accent-active: #6f9dff;
+  --accent-ai: #b6a0ef;
+  --activity-reading: #3b5680;
+  --activity-revision: #453a66;
+  --activity-class: #1e4a3c;
+  --activity-test: #544515;
+  --state-hit: #6fc79c;
+  --state-partial: #e3c55f;
+  --state-missed: #e09ab8;
+  --text-primary: #f7f4ef;
+  --text-muted: #a3a3ad;
 
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 12px 32px -18px rgb(0 0 0 / 0.8);
   --shadow-hover: 0 2px 8px rgb(0 0 0 / 0.55), 0 20px 40px -20px rgb(0 0 0 / 0.9);
-  --shadow-glow: 0 0 0 6px rgb(99 102 241 / 0.22);
+  --shadow-glow: 0 0 0 6px rgb(59 130 246 / 0.24);
 }
 
 .dark .app-backdrop {
