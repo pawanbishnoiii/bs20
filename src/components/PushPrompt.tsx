@@ -9,9 +9,7 @@ const SNOOZE_KEY = "chronodeck.push-prompt.snoozed-until";
 const SNOOZE_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Login ke 4 second baad ek non-blocking sheet jo user ko notifications
- * subscribe karne ke liye kehti hai. "Later" 24 ghante ke liye chhupata hai,
- * close/deny permanently.
+ * Compact inline invitation. Permission is requested only after explicit opt-in.
  */
 export function PushPrompt() {
   const [show, setShow] = useState(false);
@@ -23,7 +21,7 @@ export function PushPrompt() {
     if (localStorage.getItem(DISMISS_KEY) === "1") return;
     const until = Number(localStorage.getItem(SNOOZE_KEY) ?? 0);
     if (Number.isFinite(until) && until > Date.now()) return;
-    const t = setTimeout(() => setShow(true), 4000);
+    const t = setTimeout(() => setShow(true), 7000);
     return () => clearTimeout(t);
   }, []);
 
@@ -55,36 +53,36 @@ export function PushPrompt() {
     <AnimatePresence>
       {show ? (
         <motion.div
-          initial={{ y: 120, opacity: 0 }}
+          initial={{ y: 16, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 120, opacity: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-x-3 bottom-[calc(6.5rem+env(safe-area-inset-bottom))] z-[70] rounded-[28px] border border-border bg-panel p-5 shadow-2xl"
+          exit={{ y: 16, opacity: 0 }}
+          transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed right-3 bottom-[calc(6.5rem+env(safe-area-inset-bottom))] left-3 z-[70] rounded-2xl border border-border bg-panel p-3 shadow-xl sm:right-5 sm:left-auto sm:w-[390px] lg:bottom-5"
         >
           <button
             type="button"
             aria-label="Dismiss"
             onClick={() => close(true)}
-            className="absolute top-4 right-4 text-muted-foreground"
+            className="absolute top-2 right-2 grid size-9 place-items-center rounded-full text-muted-foreground"
           >
             <X className="size-4" />
           </button>
           <div className="flex items-start gap-3">
-            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand/15 text-brand">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-lavender-soft text-foreground">
               <Bell className="size-5" />
             </span>
             <div className="min-w-0 pr-6">
-              <h3 className="text-sm font-extrabold tracking-tight">Notifications on karo</h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Study reminders, session summary aur admin announcements seedha is device par.
+              <h3 className="text-sm font-bold">Study reminders</h3>
+              <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+                Get session summaries and planned-study reminders on this device.
               </p>
             </div>
           </div>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-3 flex gap-2 pl-[52px]">
             <button
               type="button"
               onClick={() => close(false)}
-              className="h-11 flex-1 rounded-full border border-border text-xs font-semibold"
+              className="h-10 min-h-10 flex-1 rounded-full border border-border text-xs font-semibold"
             >
               Later
             </button>
@@ -92,9 +90,9 @@ export function PushPrompt() {
               type="button"
               disabled={busy}
               onClick={() => void allow()}
-              className="h-11 flex-[2] rounded-full bg-foreground text-xs font-bold text-background disabled:opacity-60"
+              className="h-10 min-h-10 flex-[2] rounded-full bg-foreground text-xs font-bold text-background disabled:opacity-60"
             >
-              {busy ? "Enabling…" : "Allow notifications"}
+              {busy ? "Enabling…" : "Enable"}
             </button>
           </div>
         </motion.div>

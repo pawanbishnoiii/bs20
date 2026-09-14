@@ -141,12 +141,33 @@ export function AppShell({ children }: { children: ReactNode }) {
     (profile.data?.last_name?.[0] ?? "T");
 
   return (
-    <div className="app-backdrop flex min-h-screen flex-col text-foreground">
+    <div className="app-backdrop min-h-screen text-foreground lg:grid lg:grid-cols-[232px_minmax(0,1fr)]">
+      {!hideNav ? (
+        <aside className="sticky top-0 hidden h-screen flex-col border-r border-border bg-panel px-4 py-6 lg:flex">
+          <Link to="/today" className="flex items-center gap-3 px-2">
+            <img src={appLogo} alt="Chronodeck" width={1024} height={1024} className="size-11 rounded-2xl object-contain" />
+            <span><span className="font-heading block text-lg font-extrabold">Chronodeck</span><span className="text-xs text-muted-foreground">Study OS</span></span>
+          </Link>
+          <nav aria-label="Primary" className="mt-10 grid gap-2">
+            {NAV.map(({ to, label, Icon }) => (
+              <Link key={to} to={to} className={`flex min-h-12 items-center gap-3 rounded-2xl px-4 text-sm font-semibold transition-colors ${pathname === to ? "bg-foreground text-background" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}>
+                <Icon className="size-5" />{label}
+              </Link>
+            ))}
+          </nav>
+          <div className="mt-auto rounded-[24px] bg-lavender-soft p-4">
+            <p className="text-sm font-bold">Today’s progress</p>
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-panel"><div className="h-full rounded-full bg-blue" style={{ width: `${todayPct}%` }} /></div>
+            <p className="mt-2 text-xs text-muted-foreground">{todayPct}% of your daily goal</p>
+          </div>
+        </aside>
+      ) : null}
+      <div className="flex min-h-screen min-w-0 flex-col">
       {/* Opaque background instead of a large backdrop-blur: blurring a sticky
           layer forces a full-width GPU repaint on every scroll frame. */}
-      {!focusMode ? <header className="sticky top-0 z-30 border-b border-border bg-background/95 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:px-5">
+      {!focusMode ? <header className="sticky top-0 z-30 border-b border-border bg-background/95 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:px-6 lg:px-8">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-        <Link to="/today" className="flex min-w-0 items-center gap-3">
+        <Link to="/today" className="flex min-w-0 items-center gap-3 lg:hidden">
           <img
             src={appLogo}
             alt="Chronodeck"
@@ -251,7 +272,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header> : null}
 
       <main
-        className={`mx-auto w-full max-w-3xl flex-1 lg:max-w-5xl ${
+             className={`w-full min-w-0 flex-1 ${
           focusMode ? "max-w-none pb-0" : hideNav ? "pb-10" : "pb-28"
         }`}
       >
@@ -272,7 +293,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         ? null
         : createPortal(
             <nav
-              className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+               className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:hidden"
               style={{ position: "fixed" }}
             >
               <LimelightNav
@@ -320,9 +341,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </nav>,
             document.body,
           )}
-
-
-
+      </div>
     </div>
   );
 }
