@@ -73,6 +73,81 @@ export type Database = {
       }
       app_settings: {
         Row: {
+          accent_color: string
+          ai_enabled: boolean
+          announcement_level: string
+          banner_text: string | null
+          default_daily_goal_hours: number
+          default_weekly_goal_hours: number
+          email_auth_enabled: boolean
+          favicon_url: string | null
+          google_auth_enabled: boolean
+          id: boolean
+          landing_enabled: boolean
+          logo_url: string | null
+          maintenance_note: string | null
+          manual_log_enabled: boolean
+          onboarding_require_subjects: boolean
+          one_tap_enabled: boolean
+          push_enabled: boolean
+          signup_enabled: boolean
+          site_name: string
+          support_email: string | null
+          tagline: string
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string
+          ai_enabled?: boolean
+          announcement_level?: string
+          banner_text?: string | null
+          default_daily_goal_hours?: number
+          default_weekly_goal_hours?: number
+          email_auth_enabled?: boolean
+          favicon_url?: string | null
+          google_auth_enabled?: boolean
+          id?: boolean
+          landing_enabled?: boolean
+          logo_url?: string | null
+          maintenance_note?: string | null
+          manual_log_enabled?: boolean
+          onboarding_require_subjects?: boolean
+          one_tap_enabled?: boolean
+          push_enabled?: boolean
+          signup_enabled?: boolean
+          site_name?: string
+          support_email?: string | null
+          tagline?: string
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string
+          ai_enabled?: boolean
+          announcement_level?: string
+          banner_text?: string | null
+          default_daily_goal_hours?: number
+          default_weekly_goal_hours?: number
+          email_auth_enabled?: boolean
+          favicon_url?: string | null
+          google_auth_enabled?: boolean
+          id?: boolean
+          landing_enabled?: boolean
+          logo_url?: string | null
+          maintenance_note?: string | null
+          manual_log_enabled?: boolean
+          onboarding_require_subjects?: boolean
+          one_tap_enabled?: boolean
+          push_enabled?: boolean
+          signup_enabled?: boolean
+          site_name?: string
+          support_email?: string | null
+          tagline?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      app_settings_legacy_kv: {
+        Row: {
           id: string
           key: string
           updated_at: string
@@ -472,6 +547,45 @@ export type Database = {
           enabled: boolean
           from_email: string | null
           from_name: string | null
+          id: boolean
+          provider: string
+          smtp_host: string | null
+          smtp_password: string | null
+          smtp_port: number | null
+          smtp_user: string | null
+          updated_at: string
+        }
+        Insert: {
+          enabled?: boolean
+          from_email?: string | null
+          from_name?: string | null
+          id?: boolean
+          provider?: string
+          smtp_host?: string | null
+          smtp_password?: string | null
+          smtp_port?: number | null
+          smtp_user?: string | null
+          updated_at?: string
+        }
+        Update: {
+          enabled?: boolean
+          from_email?: string | null
+          from_name?: string | null
+          id?: boolean
+          provider?: string
+          smtp_host?: string | null
+          smtp_password?: string | null
+          smtp_port?: number | null
+          smtp_user?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_settings_legacy_kv: {
+        Row: {
+          enabled: boolean
+          from_email: string | null
+          from_name: string | null
           id: string
           provider: string
           updated_at: string
@@ -531,6 +645,39 @@ export type Database = {
         Relationships: []
       }
       motivations: {
+        Row: {
+          author: string | null
+          body: string
+          created_at: string
+          id: string
+          is_active: boolean
+          kind: string
+          month: number | null
+          title: string
+        }
+        Insert: {
+          author?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          kind?: string
+          month?: number | null
+          title?: string
+        }
+        Update: {
+          author?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          kind?: string
+          month?: number | null
+          title?: string
+        }
+        Relationships: []
+      }
+      motivations_legacy_kv: {
         Row: {
           author: string | null
           created_at: string
@@ -822,6 +969,54 @@ export type Database = {
         Relationships: []
       }
       scheduled_notifications: {
+        Row: {
+          action_path: string | null
+          audience: string
+          body: string | null
+          created_at: string
+          created_by: string | null
+          error: string | null
+          id: string
+          image_url: string | null
+          kind: string
+          send_at: string
+          sent_at: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          action_path?: string | null
+          audience?: string
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          image_url?: string | null
+          kind?: string
+          send_at?: string
+          sent_at?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          action_path?: string | null
+          audience?: string
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          image_url?: string | null
+          kind?: string
+          send_at?: string
+          sent_at?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      scheduled_notifications_legacy_kv: {
         Row: {
           action_path: string | null
           audience: string
@@ -1564,11 +1759,61 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_notification_history: {
+        Args: { _limit?: number }
+        Returns: {
+          action_path: string
+          audience: string
+          body: string
+          image_url: string
+          kind: string
+          read_count: number
+          recipients: number
+          sent_at: string
+          title: string
+        }[]
+      }
+      admin_overview: { Args: never; Returns: Json }
+      admin_push_stats: { Args: never; Returns: Json }
+      admin_push_subscribers: {
+        Args: { _limit?: number }
+        Returns: {
+          avatar_url: string
+          devices: number
+          display_name: string
+          email: string
+          last_seen_at: string
+          platforms: string
+          user_id: string
+        }[]
+      }
+      admin_set_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      admin_users: {
+        Args: { _limit?: number }
+        Returns: {
+          avatar_url: string
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          last_seen_at: string
+          onboarded: boolean
+          session_count: number
+          total_minutes: number
+        }[]
+      }
       auto_schedule_targets: { Args: never; Returns: number }
       build_study_plan_for_user: {
         Args: { p_plan_date?: string; p_user_id: string }
         Returns: number
       }
+      close_stale_sessions: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1597,6 +1842,7 @@ export type Database = {
       }
       refresh_all_daily_study_plans: { Args: never; Returns: number }
       refresh_my_study_plan: { Args: { p_plan_date?: string }; Returns: number }
+      touch_last_seen: { Args: never; Returns: undefined }
       undo_reading: { Args: { _kind: string }; Returns: undefined }
       user_local_date: { Args: { _user_id: string }; Returns: string }
     }
