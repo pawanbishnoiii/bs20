@@ -30,6 +30,9 @@ import studentAnim from "@/assets/student.json.asset.json";
 import { LottiePlayer } from "@/components/ui/lottie-player";
 import { StreakFlame } from "@/components/StreakFlame";
 import { ReadingHabitCard } from "@/components/ReadingHabitCard";
+import { DailyPlanCard } from "@/components/DailyPlanCard";
+import { fetchAttempts, subjectPerformance } from "@/lib/plan";
+import heroVideo from "@/assets/hero.mp4.asset.json";
 
 import {
   DAYS,
