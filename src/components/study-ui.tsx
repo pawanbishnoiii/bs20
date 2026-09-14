@@ -2,29 +2,31 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import activityArt from "@/assets/chronodeck-activities.png";
+import artReading from "@/assets/activity-reading.png";
+import artRevision from "@/assets/activity-revision.png";
+import artClass from "@/assets/activity-class.png";
+import artPractice from "@/assets/activity-practice.png";
 import { Button } from "@/components/ui/button";
 
 export type ActivityKind = "reading" | "revision" | "class" | "practice";
 
-const activityPositions: Record<ActivityKind, string> = {
-  reading: "0% 0%",
-  revision: "100% 0%",
-  class: "0% 100%",
-  practice: "100% 100%",
+const activityArtwork: Record<ActivityKind, string> = {
+  reading: artReading,
+  revision: artRevision,
+  class: artClass,
+  practice: artPractice,
 };
 
 export function ActivityArtwork({ kind, className }: { kind: ActivityKind; className?: string }) {
   return (
-    <span
-      className={cn("block bg-no-repeat", className)}
-      role="img"
+    <img
+      src={activityArtwork[kind]}
+      alt=""
       aria-hidden="true"
-      style={{
-        backgroundImage: `url(${activityArt})`,
-        backgroundSize: "200% 200%",
-        backgroundPosition: activityPositions[kind],
-      }}
+      width={512}
+      height={512}
+      loading="lazy"
+      className={cn("block object-contain", className)}
     />
   );
 }
