@@ -384,9 +384,11 @@ function WelcomePage() {
           </div>
         </section>
       </main>
-      <footer className="border-t border-border px-5 py-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Chronodeck Study OS</p>
+      <footer className="relative isolate overflow-hidden border-t border-border px-5 py-14">
+        <ShaderBackground className="absolute inset-0 -z-10 h-full w-full" />
+        <div className="absolute inset-0 -z-10 bg-black/25" />
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 text-sm text-white/85 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-semibold text-white">© {new Date().getFullYear()} Chronodeck Study OS</p>
           <div className="flex gap-5">
             <a href="#features">Features</a>
             <a href="#about">About</a>
