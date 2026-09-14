@@ -125,7 +125,10 @@ export function DailyPlanCard({ sessions }: { sessions: Session[] }) {
                 key={item.id}
                 className="flex items-center gap-3 rounded-2xl border border-border bg-panel p-3"
               >
-                <ActivityArtwork kind={KIND_ART[item.session_kind] ?? "reading"} size={44} />
+                <ActivityArtwork
+                  kind={KIND_ART[item.session_kind] ?? "reading"}
+                  className="size-11 shrink-0"
+                />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold">
                     {item.chapter_name ?? "Focus block"}
