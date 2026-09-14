@@ -175,6 +175,69 @@ export type Database = {
           },
         ]
       }
+      daily_study_plan_items: {
+        Row: {
+          chapter_name: string | null
+          completed_at: string | null
+          completed_session_id: string | null
+          created_at: string
+          id: string
+          plan_date: string
+          priority: number
+          session_kind: string
+          source: string
+          subject_id: string | null
+          target_minutes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_name?: string | null
+          completed_at?: string | null
+          completed_session_id?: string | null
+          created_at?: string
+          id?: string
+          plan_date: string
+          priority?: number
+          session_kind?: string
+          source?: string
+          subject_id?: string | null
+          target_minutes: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_name?: string | null
+          completed_at?: string | null
+          completed_session_id?: string | null
+          created_at?: string
+          id?: string
+          plan_date?: string
+          priority?: number
+          session_kind?: string
+          source?: string
+          subject_id?: string | null
+          target_minutes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_study_plan_items_completed_session_id_fkey"
+            columns: ["completed_session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_study_plan_items_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       device_tokens: {
         Row: {
           created_at: string
@@ -974,6 +1037,10 @@ export type Database = {
     }
     Functions: {
       auto_schedule_targets: { Args: never; Returns: number }
+      build_study_plan_for_user: {
+        Args: { p_plan_date?: string; p_user_id: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1000,6 +1067,8 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      refresh_all_daily_study_plans: { Args: never; Returns: number }
+      refresh_my_study_plan: { Args: { p_plan_date?: string }; Returns: number }
       undo_reading: { Args: { _kind: string }; Returns: undefined }
       user_local_date: { Args: { _user_id: string }; Returns: string }
     }
