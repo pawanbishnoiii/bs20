@@ -30,6 +30,9 @@ import studentAnim from "@/assets/student.json.asset.json";
 import { LottiePlayer } from "@/components/ui/lottie-player";
 import { StreakFlame } from "@/components/StreakFlame";
 import { ReadingHabitCard } from "@/components/ReadingHabitCard";
+import { DailyPlanCard } from "@/components/DailyPlanCard";
+import { fetchAttempts, subjectPerformance } from "@/lib/plan";
+import heroVideo from "@/assets/hero.mp4.asset.json";
 
 import {
   DAYS,
@@ -205,6 +208,19 @@ function TodayPage() {
   const progress = useMemo(
     () => subjectProgress(all, subjects.data ?? [], subjWindow.since, subjWindow.scale),
     [all, subjects.data, subjWindow],
+  );
+
+  const attempts = useQuery({ queryKey: ["attempts"], queryFn: () => fetchAttempts() });
+  const perf = useMemo(
+    () =>
+      subjectPerformance(
+        subjects.data ?? [],
+        all,
+        attempts.data ?? [],
+        subjWindow.since,
+        subjWindow.scale,
+      ),
+    [subjects.data, all, attempts.data, subjWindow],
   );
 
   const saveSubjectTarget = useMutation({

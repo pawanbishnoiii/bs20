@@ -1857,6 +1857,7 @@ export type Database = {
       }
       refresh_all_daily_study_plans: { Args: never; Returns: number }
       refresh_my_study_plan: { Args: { p_plan_date?: string }; Returns: number }
+      review_interval_days: { Args: { _stage: number }; Returns: number }
       touch_last_seen: { Args: never; Returns: undefined }
       undo_reading: { Args: { _kind: string }; Returns: undefined }
       user_local_date: { Args: { _user_id: string }; Returns: string }

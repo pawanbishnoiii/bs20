@@ -1,0 +1,172 @@
+import { useEffect, useMemo } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { CalendarDays, Check, Loader2, RefreshCw } from "lucide-react";
+import {
+  fetchPlan,
+  generatePlan,
+  localDateKey,
+  planItemMinutes,
+  planItemStatus,
+  setPlanItemDone,
+  type PlanStatus,
+} from "@/lib/plan";
+import { fmtHM, startOfToday, type Session } from "@/lib/study";
+import { ActivityArtwork } from "@/components/study-ui";
+
+const STATUS_STYLE: Record<PlanStatus, { label: string; cls: string }> = {
+  complete: { label: "Complete", cls: "bg-[var(--mint-soft)] text-emerald-800" },
+  progress: { label: "In progress", cls: "bg-[var(--mustard-soft,#fdf1d6)] text-amber-900" },
+  pending: { label: "Pending", cls: "bg-muted text-muted-foreground" },
+};
+
+const KIND_ART: Record<string, "reading" | "class" | "revision" | "practice"> = {
+  reading: "reading",
+  revision: "revision",
+  class: "class",
+  live: "class",
+  practice: "practice",
+  test: "practice",
+};
+
+/**
+ * Today's automatic study plan. If the syllabus produced no plan for today yet,
+ * one is generated from subjects, chapters and due revisions on first view.
+ */
+export function DailyPlanCard({ sessions }: { sessions: Session[] }) {
+  const qc = useQueryClient();
+  const planDate = localDateKey();
+  const since = useMemo(() => startOfToday(), []);
+
+  const plan = useQuery({ queryKey: ["plan", planDate], queryFn: () => fetchPlan(planDate) });
+
+  const regenerate = useMutation({
+    mutationFn: () => generatePlan(planDate),
+    onSuccess: (rows) => {
+      qc.setQueryData(["plan", planDate], rows);
+      if (rows.length === 0)
+        toast.info("Add subjects and chapters so a plan can be built for you.");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const toggle = useMutation({
+    mutationFn: (v: { id: string; done: boolean }) => setPlanItemDone(v.id, v.done),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["plan", planDate] }),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  // Auto-build today's plan exactly once when the day starts empty.
+  useEffect(() => {
+    if (plan.isSuccess && (plan.data?.length ?? 0) === 0 && regenerate.isIdle)
+      regenerate.mutate();
+  }, [plan.isSuccess, plan.data, regenerate]);
+
+  const items = plan.data ?? [];
+  const rows = items.map((item) => {
+    const minutes = planItemMinutes(item, sessions, since);
+    return { item, minutes, status: planItemStatus(item, minutes) };
+  });
+  const doneCount = rows.filter((r) => r.status === "complete").length;
+  const plannedMinutes = items.reduce((a, i) => a + i.target_minutes, 0);
+
+  return (
+    <section className="surface-card p-5 sm:p-6">
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="grid size-10 place-items-center rounded-2xl bg-[var(--lavender-soft)]">
+          <CalendarDays className="size-5" aria-hidden="true" />
+        </span>
+        <div className="min-w-0">
+          <h2 className="text-xl font-bold tracking-tight">Your plan</h2>
+          <p className="text-xs font-semibold text-muted-foreground">
+            {new Date().toLocaleDateString(undefined, {
+              weekday: "long",
+              day: "numeric",
+              month: "short",
+            })}{" "}
+            · {doneCount}/{items.length} done · {fmtHM(plannedMinutes)} planned
+          </p>
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={() => regenerate.mutate()}
+            disabled={regenerate.isPending}
+            className="inline-flex min-h-10 items-center gap-2 rounded-full border border-border px-3 text-xs font-bold disabled:opacity-60"
+          >
+            {regenerate.isPending ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <RefreshCw className="size-4" aria-hidden="true" />
+            )}
+            Regenerate
+          </button>
+          <Link to="/timetable" className="text-sm font-semibold text-brand">
+            Timetable
+          </Link>
+        </div>
+      </div>
+
+      {plan.isLoading ? (
+        <p className="mt-5 text-sm text-muted-foreground">Building today's plan…</p>
+      ) : rows.length === 0 ? (
+        <p className="mt-5 text-sm text-muted-foreground">
+          No plan yet. Add subjects with chapters and press Regenerate.
+        </p>
+      ) : (
+        <ul className="mt-5 space-y-3">
+          {rows.map(({ item, minutes, status }) => {
+            const style = STATUS_STYLE[status];
+            const pct = item.target_minutes
+              ? Math.min(100, Math.round((minutes / item.target_minutes) * 100))
+              : 0;
+            return (
+              <li
+                key={item.id}
+                className="flex items-center gap-3 rounded-2xl border border-border bg-panel p-3"
+              >
+                <ActivityArtwork
+                  kind={KIND_ART[item.session_kind] ?? "reading"}
+                  className="size-11 shrink-0"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold">
+                    {item.chapter_name ?? "Focus block"}
+                  </p>
+                  <p className="mt-0.5 text-xs font-semibold text-muted-foreground capitalize">
+                    {item.session_kind} · {fmtHM(item.target_minutes)} target
+                    {minutes > 0 ? ` · ${fmtHM(minutes)} done` : ""}
+                  </p>
+                  <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-muted">
+                    <span
+                      className="block h-full rounded-full bg-brand transition-[width] duration-700"
+                      style={{ width: `${status === "complete" ? 100 : pct}%` }}
+                    />
+                  </span>
+                </div>
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${style.cls}`}
+                >
+                  {style.label}
+                </span>
+                <button
+                  onClick={() =>
+                    toggle.mutate({ id: item.id, done: !item.completed_at })
+                  }
+                  aria-label={item.completed_at ? "Mark as pending" : "Mark as complete"}
+                  className={`grid size-9 shrink-0 place-items-center rounded-full border transition ${
+                    item.completed_at
+                      ? "border-transparent bg-foreground text-background"
+                      : "border-border text-muted-foreground"
+                  }`}
+                >
+                  <Check className="size-4" aria-hidden="true" />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
+}

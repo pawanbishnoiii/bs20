@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.advance_chapter_learning_state() FROM PUBLIC, anon, authenticated;
