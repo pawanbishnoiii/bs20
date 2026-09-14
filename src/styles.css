@@ -63,36 +63,36 @@
   --radius: 0.75rem; /* 12px — buttons, chips, controls */
   --radius-card: 28px; /* cards, panels */
   --font-display-family: "Inter", "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
-  --font-heading-family: "Inter", "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
-  --font-mono-family: "JetBrains Mono", ui-monospace, monospace;
+  --font-heading-family: "Manrope", "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
+  --font-mono-family: "Inter", ui-monospace, monospace;
 
-  /* Bright study desk — cool canvas, deep ink actions, sky blue accent. */
-  --background: #f6f4ff;
-  --foreground: #182230;
+  /* Warm paper canvas, layered white cards, pastel accents, near-black ink. */
+  --background: #fbf8f3;
+  --foreground: #14151a;
   --panel: #ffffff;
-  --brand: #5b21f0;
-  --brand-foreground: oklch(1 0 0);
-  --warm: oklch(0.82 0.16 82);
+  --brand: #14151a;
+  --brand-foreground: #ffffff;
+  --warm: #e0a90a;
 
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #14151a;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #5b21f0;
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0.02 240);
-  --secondary-foreground: #0f172a;
-  --muted: oklch(0.95 0.014 245);
-  --muted-foreground: #596579;
-  --accent: oklch(0.9 0.09 292);
-  --accent-foreground: oklch(0.42 0.16 246);
-  --destructive: #b42318;
+  --popover-foreground: #14151a;
+  --primary: #14151a;
+  --primary-foreground: #ffffff;
+  --secondary: #f2eee7;
+  --secondary-foreground: #14151a;
+  --muted: #f2eee7;
+  --muted-foreground: #6b6b76;
+  --accent: #ece4fb;
+  --accent-foreground: #14151a;
+  --destructive: #c2410c;
   --destructive-foreground: #ffffff;
   --success: #0f766e;
   --warning: #b45309;
-  --border: #e3e7ef;
-  --input: rgb(15 23 42 / 0.12);
-  --ring: color-mix(in oklab, var(--brand) 36%, transparent);
+  --border: #ebe5da;
+  --input: rgb(20 21 26 / 0.12);
+  --ring: color-mix(in oklab, #2563eb 45%, transparent);
 }
 
 @layer base {
@@ -191,23 +191,23 @@
 
 /* Pastel accent tints used across bento cards and chips. */
 :root {
-  --pop-lavender: oklch(0.88 0.11 292);
-  --pop-sky: oklch(0.88 0.12 235);
-  --pop-lilac: oklch(0.9 0.09 315);
-  --pop-mint: oklch(0.88 0.15 155);
-  --pop-mustard: oklch(0.9 0.17 92);
-  --pop-coral: oklch(0.87 0.14 22);
-  --pop-ink: oklch(0.2 0.035 255);
+  --pop-lavender: #cbbbf3;
+  --pop-sky: #a9c9ff;
+  --pop-lilac: #f3c7ec;
+  --pop-mint: #c8f2df;
+  --pop-mustard: #ffe8a3;
+  --pop-coral: #f3c7ec;
+  --pop-ink: #14151a;
 }
 
 .dark {
-  --pop-lavender: #2a2547;
-  --pop-sky: #16304a;
-  --pop-lilac: #2c2340;
-  --pop-mint: #22381d;
-  --pop-mustard: #3d3218;
-  --pop-coral: #3d2030;
-  --pop-ink: #0b0d12;
+  --pop-lavender: #332c4d;
+  --pop-sky: #1d2e4a;
+  --pop-lilac: #3d2b3b;
+  --pop-mint: #1e3a31;
+  --pop-mustard: #3c3319;
+  --pop-coral: #3d2b3b;
+  --pop-ink: #0e0f13;
 }
 
 /** Big rounded sheet with a soft pastel wash — hero / feature blocks. */
