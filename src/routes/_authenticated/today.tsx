@@ -30,6 +30,7 @@ import studentAnim from "@/assets/student.json.asset.json";
 import { LottiePlayer } from "@/components/ui/lottie-player";
 import { StreakFlame } from "@/components/StreakFlame";
 import { ReadingHabitCard } from "@/components/ReadingHabitCard";
+import { DateStrip } from "@/components/DateStrip";
 
 import {
   DAYS,
@@ -313,6 +314,7 @@ function TodayPage() {
       ) : null}
 
       <div className="app-page space-y-6">
+        <DateStrip />
         {/* Focus card — pastel panel with goal, progress and one clear action */}
         <section className="surface-card overflow-hidden bg-[var(--lavender-soft)] p-6 sm:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
