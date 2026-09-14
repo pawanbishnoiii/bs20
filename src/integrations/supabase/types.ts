@@ -121,14 +121,17 @@ export type Database = {
       }
       chapter_learning_state: {
         Row: {
+          chapter_id: string | null
           chapter_name: string
           class_minutes: number
           created_at: string
           id: string
+          last_recall: number | null
           last_studied_at: string | null
           next_review_at: string
           practice_minutes: number
           reading_minutes: number
+          recall_samples: number
           review_stage: number
           revision_minutes: number
           subject_id: string
@@ -136,14 +139,17 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          chapter_id?: string | null
           chapter_name: string
           class_minutes?: number
           created_at?: string
           id?: string
+          last_recall?: number | null
           last_studied_at?: string | null
           next_review_at?: string
           practice_minutes?: number
           reading_minutes?: number
+          recall_samples?: number
           review_stage?: number
           revision_minutes?: number
           subject_id: string
@@ -151,14 +157,17 @@ export type Database = {
           user_id: string
         }
         Update: {
+          chapter_id?: string | null
           chapter_name?: string
           class_minutes?: number
           created_at?: string
           id?: string
+          last_recall?: number | null
           last_studied_at?: string | null
           next_review_at?: string
           practice_minutes?: number
           reading_minutes?: number
+          recall_samples?: number
           review_stage?: number
           revision_minutes?: number
           subject_id?: string
@@ -166,6 +175,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "chapter_learning_state_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "chapter_learning_state_subject_id_fkey"
             columns: ["subject_id"]
@@ -175,53 +191,226 @@ export type Database = {
           },
         ]
       }
+      chapter_subtopics: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          estimated_minutes: number
+          first_pass_done: boolean
+          id: string
+          name: string
+          position: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          estimated_minutes?: number
+          first_pass_done?: boolean
+          id?: string
+          name: string
+          position?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          estimated_minutes?: number
+          first_pass_done?: boolean
+          id?: string
+          name?: string
+          position?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_subtopics_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chapters: {
+        Row: {
+          archived: boolean
+          created_at: string
+          difficulty: number
+          estimated_minutes: number
+          first_pass_done: boolean
+          id: string
+          name: string
+          position: number
+          subject_id: string
+          total_units: number | null
+          units_done: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          archived?: boolean
+          created_at?: string
+          difficulty?: number
+          estimated_minutes?: number
+          first_pass_done?: boolean
+          id?: string
+          name: string
+          position?: number
+          subject_id: string
+          total_units?: number | null
+          units_done?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          archived?: boolean
+          created_at?: string
+          difficulty?: number
+          estimated_minutes?: number
+          first_pass_done?: boolean
+          id?: string
+          name?: string
+          position?: number
+          subject_id?: string
+          total_units?: number | null
+          units_done?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_progress: {
+        Row: {
+          class_id: string
+          completed: boolean
+          created_at: string
+          id: string
+          notes: string | null
+          playback_speed: number
+          session_id: string | null
+          updated_at: string
+          user_id: string
+          wall_clock_minutes: number
+          watched_content_minutes: number
+        }
+        Insert: {
+          class_id: string
+          completed?: boolean
+          created_at?: string
+          id?: string
+          notes?: string | null
+          playback_speed?: number
+          session_id?: string | null
+          updated_at?: string
+          user_id: string
+          wall_clock_minutes?: number
+          watched_content_minutes?: number
+        }
+        Update: {
+          class_id?: string
+          completed?: boolean
+          created_at?: string
+          id?: string
+          notes?: string | null
+          playback_speed?: number
+          session_id?: string | null
+          updated_at?: string
+          user_id?: string
+          wall_clock_minutes?: number
+          watched_content_minutes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_progress_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "online_classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_progress_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_study_plan_items: {
         Row: {
+          chapter_id: string | null
           chapter_name: string | null
           completed_at: string | null
           completed_session_id: string | null
           created_at: string
           id: string
+          pinned: boolean
           plan_date: string
           priority: number
           session_kind: string
           source: string
           subject_id: string | null
+          subtopic_id: string | null
           target_minutes: number
           updated_at: string
           user_id: string
         }
         Insert: {
+          chapter_id?: string | null
           chapter_name?: string | null
           completed_at?: string | null
           completed_session_id?: string | null
           created_at?: string
           id?: string
+          pinned?: boolean
           plan_date: string
           priority?: number
           session_kind?: string
           source?: string
           subject_id?: string | null
+          subtopic_id?: string | null
           target_minutes: number
           updated_at?: string
           user_id: string
         }
         Update: {
+          chapter_id?: string | null
           chapter_name?: string | null
           completed_at?: string | null
           completed_session_id?: string | null
           created_at?: string
           id?: string
+          pinned?: boolean
           plan_date?: string
           priority?: number
           session_kind?: string
           source?: string
           subject_id?: string | null
+          subtopic_id?: string | null
           target_minutes?: number
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "daily_study_plan_items_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "daily_study_plan_items_completed_session_id_fkey"
             columns: ["completed_session_id"]
@@ -234,6 +423,13 @@ export type Database = {
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_study_plan_items_subtopic_id_fkey"
+            columns: ["subtopic_id"]
+            isOneToOne: false
+            referencedRelation: "chapter_subtopics"
             referencedColumns: ["id"]
           },
         ]
@@ -405,6 +601,63 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      online_classes: {
+        Row: {
+          chapter_id: string | null
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          mode: string
+          scheduled_at: string | null
+          subject_id: string | null
+          title: string
+          updated_at: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          mode?: string
+          scheduled_at?: string | null
+          subject_id?: string | null
+          title: string
+          updated_at?: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          mode?: string
+          scheduled_at?: string | null
+          subject_id?: string | null
+          title?: string
+          updated_at?: string
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "online_classes_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "online_classes_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -654,6 +907,85 @@ export type Database = {
           },
         ]
       }
+      session_outcomes: {
+        Row: {
+          chapter_id: string | null
+          content_completed_pct: number | null
+          created_at: string
+          id: string
+          is_reread: boolean
+          kind: string
+          net_focus_minutes: number | null
+          notes: string | null
+          recall_rating: number | null
+          revision_result: string | null
+          session_id: string
+          subtopic_id: string | null
+          unit_label: string | null
+          units_done: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          content_completed_pct?: number | null
+          created_at?: string
+          id?: string
+          is_reread?: boolean
+          kind: string
+          net_focus_minutes?: number | null
+          notes?: string | null
+          recall_rating?: number | null
+          revision_result?: string | null
+          session_id: string
+          subtopic_id?: string | null
+          unit_label?: string | null
+          units_done?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string | null
+          content_completed_pct?: number | null
+          created_at?: string
+          id?: string
+          is_reread?: boolean
+          kind?: string
+          net_focus_minutes?: number | null
+          notes?: string | null
+          recall_rating?: number | null
+          revision_result?: string | null
+          session_id?: string
+          subtopic_id?: string | null
+          unit_label?: string | null
+          units_done?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_outcomes_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_outcomes_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_outcomes_subtopic_id_fkey"
+            columns: ["subtopic_id"]
+            isOneToOne: false
+            referencedRelation: "chapter_subtopics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sessions: {
         Row: {
           created_at: string
@@ -698,6 +1030,76 @@ export type Database = {
           },
         ]
       }
+      study_recommendations: {
+        Row: {
+          chapter_id: string | null
+          created_at: string
+          for_date: string
+          id: string
+          kind: string
+          reason: string
+          score: number
+          status: string
+          subject_id: string | null
+          subtopic_id: string | null
+          suggested_minutes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          created_at?: string
+          for_date?: string
+          id?: string
+          kind: string
+          reason: string
+          score?: number
+          status?: string
+          subject_id?: string | null
+          subtopic_id?: string | null
+          suggested_minutes: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string | null
+          created_at?: string
+          for_date?: string
+          id?: string
+          kind?: string
+          reason?: string
+          score?: number
+          status?: string
+          subject_id?: string | null
+          subtopic_id?: string | null
+          suggested_minutes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_recommendations_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_recommendations_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_recommendations_subtopic_id_fkey"
+            columns: ["subtopic_id"]
+            isOneToOne: false
+            referencedRelation: "chapter_subtopics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_sessions: {
         Row: {
           auto_closed: boolean
@@ -706,6 +1108,7 @@ export type Database = {
           break_type: string | null
           category: string | null
           chapter: string | null
+          chapter_id: string | null
           created_at: string
           duration_minutes: number | null
           duration_seconds: number | null
@@ -718,6 +1121,7 @@ export type Database = {
           started_at: string
           subject_id: string | null
           subject_name: string | null
+          subtopic_id: string | null
           topic: string | null
           total_break_seconds: number
           user_id: string
@@ -730,6 +1134,7 @@ export type Database = {
           break_type?: string | null
           category?: string | null
           chapter?: string | null
+          chapter_id?: string | null
           created_at?: string
           duration_minutes?: number | null
           duration_seconds?: number | null
@@ -742,6 +1147,7 @@ export type Database = {
           started_at?: string
           subject_id?: string | null
           subject_name?: string | null
+          subtopic_id?: string | null
           topic?: string | null
           total_break_seconds?: number
           user_id: string
@@ -754,6 +1160,7 @@ export type Database = {
           break_type?: string | null
           category?: string | null
           chapter?: string | null
+          chapter_id?: string | null
           created_at?: string
           duration_minutes?: number | null
           duration_seconds?: number | null
@@ -766,6 +1173,7 @@ export type Database = {
           started_at?: string
           subject_id?: string | null
           subject_name?: string | null
+          subtopic_id?: string | null
           topic?: string | null
           total_break_seconds?: number
           user_id?: string
@@ -773,10 +1181,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "study_sessions_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "study_sessions_subject_id_fkey"
             columns: ["subject_id"]
             isOneToOne: false
             referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_sessions_subtopic_id_fkey"
+            columns: ["subtopic_id"]
+            isOneToOne: false
+            referencedRelation: "chapter_subtopics"
             referencedColumns: ["id"]
           },
         ]
@@ -852,6 +1274,7 @@ export type Database = {
       }
       targets: {
         Row: {
+          chapter_id: string | null
           chapters: Json
           created_at: string
           daily_hours: number
@@ -864,6 +1287,7 @@ export type Database = {
           weekly_hours: number
         }
         Insert: {
+          chapter_id?: string | null
           chapters?: Json
           created_at?: string
           daily_hours?: number
@@ -876,6 +1300,7 @@ export type Database = {
           weekly_hours?: number
         }
         Update: {
+          chapter_id?: string | null
           chapters?: Json
           created_at?: string
           daily_hours?: number
@@ -889,6 +1314,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "targets_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "targets_subject_id_fkey"
             columns: ["subject_id"]
             isOneToOne: false
@@ -897,8 +1329,95 @@ export type Database = {
           },
         ]
       }
+      test_attempts: {
+        Row: {
+          chapter_id: string | null
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          questions_attempted: number
+          questions_correct: number
+          questions_total: number
+          scope: string
+          score: number | null
+          session_id: string | null
+          subject_id: string | null
+          subtopic_id: string | null
+          taken_at: string
+          updated_at: string
+          user_id: string
+          weak_topics: string[]
+        }
+        Insert: {
+          chapter_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          questions_attempted?: number
+          questions_correct?: number
+          questions_total: number
+          scope?: string
+          score?: number | null
+          session_id?: string | null
+          subject_id?: string | null
+          subtopic_id?: string | null
+          taken_at?: string
+          updated_at?: string
+          user_id: string
+          weak_topics?: string[]
+        }
+        Update: {
+          chapter_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          questions_attempted?: number
+          questions_correct?: number
+          questions_total?: number
+          scope?: string
+          score?: number | null
+          session_id?: string | null
+          subject_id?: string | null
+          subtopic_id?: string | null
+          taken_at?: string
+          updated_at?: string
+          user_id?: string
+          weak_topics?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_attempts_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_attempts_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "study_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_attempts_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_attempts_subtopic_id_fkey"
+            columns: ["subtopic_id"]
+            isOneToOne: false
+            referencedRelation: "chapter_subtopics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       timetable_blocks: {
         Row: {
+          chapter_id: string | null
           created_at: string
           day_of_week: number
           end_time: string
@@ -913,6 +1432,7 @@ export type Database = {
           week_parity: string
         }
         Insert: {
+          chapter_id?: string | null
           created_at?: string
           day_of_week: number
           end_time: string
@@ -927,6 +1447,7 @@ export type Database = {
           week_parity?: string
         }
         Update: {
+          chapter_id?: string | null
           created_at?: string
           day_of_week?: number
           end_time?: string
@@ -941,6 +1462,13 @@ export type Database = {
           week_parity?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "timetable_blocks_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "timetable_blocks_subject_id_fkey"
             columns: ["subject_id"]
