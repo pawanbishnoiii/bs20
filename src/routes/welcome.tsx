@@ -151,11 +151,18 @@ function WelcomePage() {
       </header>
 
       <main id="top">
-        <section className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-14 md:min-h-[720px] md:grid-cols-[.9fr_1.1fr] md:py-20">
+        <section className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-14 md:grid-cols-[1.05fr_.95fr] md:py-20">
           <div data-hero-copy>
-            <p className="text-sm font-semibold text-primary">Your calm study workspace</p>
-            <h1 className="mt-4 max-w-xl text-4xl font-extrabold leading-[1.06] tracking-[-.04em] sm:text-6xl">
-              Make every study session count.
+            <p className="section-label">Your calm study workspace</p>
+            <h1 className="mt-4 max-w-xl text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.04] font-extrabold tracking-[-.04em]">
+              A little focus.{" "}
+              <span className="relative inline-block">
+                <span
+                  aria-hidden
+                  className="absolute inset-x-[-.25em] inset-y-[.12em] -z-10 rounded-[1.25rem] bg-[var(--lavender-soft)]"
+                />
+                A lot of progress.
+              </span>
             </h1>
             <p className="mt-5 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg">
               Plan your week, enter a distraction-free focus session, and see where your study time
@@ -164,54 +171,57 @@ function WelcomePage() {
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link
                 to={destination}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 font-semibold text-primary-foreground"
+                className="inline-flex h-13 min-h-12 items-center justify-center gap-2 rounded-full bg-foreground px-7 font-bold text-background"
               >
                 Start studying <ArrowRight className="size-4" />
               </Link>
               <a
                 href="#how"
-                className="inline-flex h-12 items-center justify-center rounded-xl border border-border bg-panel px-6 font-semibold"
+                className="inline-flex h-13 min-h-12 items-center justify-center rounded-full border border-border bg-panel px-7 font-semibold"
               >
                 Explore the app
               </a>
             </div>
           </div>
-          <div
-            data-preview
-            className="relative rounded-3xl border border-border bg-panel p-4 shadow-[0_28px_70px_-46px_rgb(23_32_51/.45)] sm:p-6"
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Demo preview</p>
-                <p className="mt-1 font-bold">Today’s focus</p>
-              </div>
-              <img
-                src={studentArt}
-                width="96"
-                height="96"
-                alt="Student studying"
-                className="size-20 object-contain"
-              />
-            </div>
-            <div className="rounded-2xl bg-primary p-5 text-primary-foreground">
-              <p className="text-sm opacity-80">Focused today</p>
-              <p className="mt-2 font-mono text-4xl tabular-nums">02:15</p>
-              <div className="mt-5 h-2 rounded-full bg-white/20">
-                <div className="h-full w-3/5 rounded-full bg-white" />
+          <div data-preview className="relative">
+            <img
+              src={pathArt}
+              width={1024}
+              height={1024}
+              alt="Student climbing a path of books"
+              className="mx-auto w-full max-w-md object-contain"
+            />
+            <div className="surface-card absolute -bottom-4 left-0 w-44 bg-panel p-4 shadow-lg sm:w-52">
+              <p className="text-xs text-muted-foreground">Focused today · demo</p>
+              <p className="mt-1 text-3xl font-extrabold tabular-nums">02:15</p>
+              <div className="mt-3 h-2 rounded-full bg-secondary">
+                <div className="h-full w-3/5 rounded-full bg-foreground" />
               </div>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-border p-4">
-                <p className="text-xs text-muted-foreground">This week</p>
-                <p className="mt-1 font-mono text-xl">12h 40m</p>
-              </div>
-              <div className="rounded-2xl border border-border p-4">
-                <p className="text-xs text-muted-foreground">Next block</p>
-                <p className="mt-1 font-semibold">Geography · 4:00</p>
-              </div>
+            <div className="surface-card absolute -top-2 right-0 hidden w-44 bg-[var(--blue-soft)] p-4 sm:block">
+              <p className="text-xs text-muted-foreground">Next block · demo</p>
+              <p className="mt-1 font-bold">Geography · 4:00</p>
             </div>
           </div>
         </section>
+
+        <section className="mx-auto max-w-6xl px-5 pb-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {activities.map((a) => (
+              <article
+                data-reveal
+                key={a.title}
+                className="surface-card p-5"
+                style={{ background: a.bg }}
+              >
+                <ActivityArtwork kind={a.kind} className="size-16 rounded-2xl" />
+                <h3 className="mt-4 text-lg font-bold">{a.title}</h3>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">{a.copy}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
 
         <section id="how" data-reveal className="border-y border-border bg-panel px-5 py-16">
           <div className="mx-auto max-w-6xl">
