@@ -236,9 +236,6 @@ function StudySetupPage() {
               )}
             </div>
           ) : null}
-
-            </div>
-          ) : null}
             </section>
 
             <section className="surface-card p-5 sm:p-6">
