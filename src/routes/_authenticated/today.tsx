@@ -442,6 +442,39 @@ function TodayPage() {
           </div>
 
           <MonthGrid perDay={perDay} dailyGoal={dailyGoal} />
+
+          {/* Subject-wise performance against each subject's target */}
+          <div className="mt-6">
+            <p className="section-label">Subject performance · {subjWindow.label}</p>
+            {progress.length === 0 ? (
+              <p className="mt-3 text-sm text-muted-foreground">
+                Add subjects to see how each one is performing.
+              </p>
+            ) : (
+              <ul className="mt-3 space-y-3">
+                {progress.slice(0, 8).map((s) => (
+                  <li key={`${s.id ?? s.name}`} className="grid gap-1.5">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="truncate text-sm font-semibold">{s.name}</span>
+                      <span className="shrink-0 text-xs font-semibold tabular-nums text-muted-foreground">
+                        {fmtHM(s.minutes)}
+                        {s.targetHours > 0 ? ` / ${fmtHM(Math.round(s.targetHours * 60))}` : ""}
+                      </span>
+                    </div>
+                    <span className="h-2.5 overflow-hidden rounded-full bg-muted">
+                      <span
+                        className="block h-full rounded-full transition-[width] duration-700 ease-out"
+                        style={{
+                          width: `${Math.min(100, s.targetHours > 0 ? s.pct : s.minutes > 0 ? 100 : 0)}%`,
+                          background: s.color,
+                        }}
+                      />
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </Reveal>
 
         {/* Hourly heatmap */}
