@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import appLogo from "@/assets/chronodeck-logo.png";
 import pathArt from "@/assets/chronodeck-learning-path.png";
 import { ActivityArtwork, type ActivityKind } from "@/components/study-ui";
+import { ShaderBackground } from "@/components/ui/frorest-green";
 
 const activities: Array<{ kind: ActivityKind; title: string; copy: string; bg: string }> = [
   {
