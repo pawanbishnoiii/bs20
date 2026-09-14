@@ -8,7 +8,35 @@ import { useRef, useState } from "react";
 import * as Accordion from "@radix-ui/react-accordion";
 import { supabase } from "@/integrations/supabase/client";
 import appLogo from "@/assets/chronodeck-logo.png";
-import studentArt from "@/assets/today-hero.png";
+import pathArt from "@/assets/chronodeck-learning-path.png";
+import { ActivityArtwork, type ActivityKind } from "@/components/study-ui";
+
+const activities: Array<{ kind: ActivityKind; title: string; copy: string; bg: string }> = [
+  {
+    kind: "reading",
+    title: "Reading",
+    copy: "Log newspaper, magazine and book reading as real study time.",
+    bg: "var(--yellow-soft)",
+  },
+  {
+    kind: "revision",
+    title: "Revision",
+    copy: "Come back to chapters on a schedule instead of by memory.",
+    bg: "var(--lavender-soft)",
+  },
+  {
+    kind: "class",
+    title: "Online class",
+    copy: "Track lectures alongside self-study so the week stays honest.",
+    bg: "var(--blue-soft)",
+  },
+  {
+    kind: "practice",
+    title: "Test & practice",
+    copy: "Record attempts and see which subjects still need work.",
+    bg: "var(--mint-soft)",
+  },
+];
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
