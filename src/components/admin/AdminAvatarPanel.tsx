@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 async function fetchPresets() {
   const { data, error } = await supabase
     .from("avatar_presets")
-    .select("id,label,url,sort_order,is_active")
+    .select("id,name,image_url,sort_order,is_active")
     .order("sort_order", { ascending: true });
   if (error) throw new Error(error.message);
   return data ?? [];
@@ -42,8 +42,8 @@ export function AdminAvatarPanel() {
         const { data: signed, error: signedError } = await supabase.storage.from("data").createSignedUrl(path, 60 * 60 * 24 * 3650);
         if (signedError) throw new Error(signedError.message);
         const { error: insertError } = await supabase.from("avatar_presets").insert({
-          label: file.name.replace(/\.[^.]+$/, ""),
-          url: signed.signedUrl,
+          name: file.name.replace(/\.[^.]+$/, ""),
+          image_url: signed.signedUrl,
           sort_order: presets.data?.length ?? 0,
         });
         if (insertError) throw new Error(insertError.message);
@@ -89,14 +89,14 @@ export function AdminAvatarPanel() {
         {(presets.data ?? []).map((p) => (
           <div key={p.id} className="relative">
             <img
-              src={p.url}
-              alt={p.label}
+              src={p.image_url}
+              alt={p.name}
               className="size-14 rounded-full object-cover ring-2 ring-border"
             />
             <button
               type="button"
               onClick={() => remove.mutate(p.id)}
-              aria-label={`Remove ${p.label}`}
+              aria-label={`Remove ${p.name}`}
               className="absolute -top-1 -right-1 grid size-5 place-items-center rounded-full bg-destructive text-[11px] font-bold text-destructive-foreground"
             >
               ×

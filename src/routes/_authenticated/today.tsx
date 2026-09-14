@@ -312,83 +312,73 @@ function TodayPage() {
         />
       ) : null}
 
-      <div className="space-y-6 px-4 py-6">
-        {/* Hero sheet — same illustrated language as the auth screen */}
-        <section className="pop-sheet p-6">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -top-24 -right-16 size-64 rounded-full opacity-30 blur-2xl"
-            style={{
-              background: "linear-gradient(135deg, var(--accent-start), var(--accent-end))",
-            }}
-          />
-          <div className="relative flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <p className="eyebrow text-brand">Today</p>
-              <h1 className="mt-2 text-[26px] leading-[1.15] font-extrabold tracking-tight">
-                {todayMin > 0 ? `${fmtHM(todayMin)} done today` : "Aaj ka pehla session shuru karo"}
+      <div className="app-page space-y-6">
+        {/* Focus card — pastel panel with goal, progress and one clear action */}
+        <section className="surface-card overflow-hidden bg-[var(--lavender-soft)] p-6 sm:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
+            <div className="min-w-0 flex-1">
+              <p className="section-label">Today</p>
+              <h1 className="mt-2 text-[clamp(1.6rem,3.4vw,2.4rem)] leading-[1.1] font-extrabold tracking-tight">
+                {todayMin > 0 ? `${fmtHM(todayMin)} focused today` : "Start your first session"}
               </h1>
-              <p className="mt-1.5 text-xs text-muted-foreground">
-                Daily target {fmtHM(dailyGoal * 60)} ·{" "}
+              <p className="mt-2 text-[15px] leading-6 text-muted-foreground">
+                Daily goal {fmtHM(dailyGoal * 60)} ·{" "}
                 {Math.min(100, Math.round((todayMin / 60 / dailyGoal) * 100))}% complete
               </p>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-[var(--bg-elevated)] py-1 pr-3 pl-1.5 text-[11px] font-bold">
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1 rounded-full bg-panel py-1 pr-3 pl-1.5 text-xs font-bold">
                   <StreakFlame days={streak} showCount={false} size={22} />
                   {streak === 1 ? "1 day streak" : `${streak} day streak`}
                 </span>
-                <span className="rounded-full bg-brand/12 px-3 py-1.5 text-[11px] font-bold text-brand">
-                  {streak > 0
-                    ? "Streak safe — keep it alive"
-                    : "Hit today's target to start a streak"}
+                <span className="rounded-full bg-panel/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+                  {streak > 0 ? "Streak safe — keep it alive" : "Hit today's goal to start a streak"}
                 </span>
               </div>
+
+              <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-panel">
+                <div
+                  className="h-full rounded-full bg-foreground transition-[width] duration-1000 ease-out"
+                  style={{ width: `${Math.min(100, (todayMin / 60 / dailyGoal) * 100)}%` }}
+                />
+              </div>
+
+              <div className="mt-5 flex items-center gap-3">
+                <button
+                  ref={ctaRef}
+                  onClick={() => navigate({ to: running.data ? "/timer" : "/study" })}
+                  className="inline-flex h-13 min-h-12 flex-1 items-center justify-center rounded-full bg-foreground px-6 text-[15px] font-bold text-background sm:flex-none sm:px-10"
+                >
+                  {running.data ? "Open running timer" : "Start study"}
+                </button>
+                <Mascot state={heroMood} size={48} className="shrink-0" />
+              </div>
             </div>
-            <div className="pointer-events-none -mt-2 -mr-2 size-24 shrink-0 select-none sm:size-32">
+            <div className="pointer-events-none mx-auto w-40 shrink-0 select-none sm:w-56 lg:w-64">
               <LottiePlayer src={studentAnim.url} className="h-full w-full" />
             </div>
           </div>
-
-          <div className="relative mt-6 h-2.5 overflow-hidden rounded-full bg-[var(--bg-elevated)]">
-            <div
-              className="gradient-bar h-full rounded-full transition-[width] duration-1000 ease-out"
-              style={{ width: `${Math.min(100, (todayMin / 60 / dailyGoal) * 100)}%` }}
-            />
-          </div>
-
-          <div className="relative mt-5 flex items-center gap-3">
-            <button
-              ref={ctaRef}
-              onClick={() => navigate({ to: running.data ? "/timer" : "/study" })}
-              className="btn-pop h-14 flex-1"
-            >
-              {running.data ? "Open running timer" : "Start study"}
-            </button>
-            <Mascot state={heroMood} size={52} className="shrink-0" />
-          </div>
         </section>
 
-        {/* Stats — quiet rounded tiles next to the hero */}
+        {/* Compact period summaries */}
         <section className="grid grid-cols-3 gap-3">
           {[
-            { label: "Today", minutes: todayMin, tint: "tint-lavender" },
-            { label: "This week", minutes: weekMin, tint: "tint-sky" },
-            { label: "This month", minutes: monthMin, tint: "tint-mustard" },
+            { label: "Today", minutes: todayMin, bg: "var(--lavender-soft)" },
+            { label: "This week", minutes: weekMin, bg: "var(--blue-soft)" },
+            { label: "This month", minutes: monthMin, bg: "var(--mint-soft)" },
           ].map((s) => (
             <div
               key={s.label}
-              className={`pop-tile pop-tile-press ${s.tint} text-[var(--pop-ink)] dark:text-foreground`}
+              className="surface-card p-4 sm:p-5"
+              style={{ background: s.bg }}
             >
-              <p className="num text-lg leading-none font-extrabold">
+              <p className="text-xl leading-none font-extrabold tabular-nums">
                 <CountUp value={Math.floor(s.minutes / 60)} decimals={0} suffix="h" />
                 <span className="ml-1 text-xs opacity-70">
                   {String(Math.round(s.minutes % 60)).padStart(2, "0")}m
                 </span>
               </p>
-              <p className="num mt-2 text-[10px] font-semibold tracking-wide uppercase opacity-70">
-                {s.label}
-              </p>
+              <p className="mt-2 text-xs font-semibold text-muted-foreground">{s.label}</p>
             </div>
           ))}
         </section>
@@ -396,26 +386,21 @@ function TodayPage() {
         {/* Compulsory reading — daily newspaper + monthly magazine */}
         <ReadingHabitCard />
 
-
-
-        {/* Tomorrow plan */}
-        <section className="rounded-2xl border border-border bg-panel p-5">
+        {/* Today and next day plan */}
+        <section className="surface-card p-5 sm:p-6">
           <div className="flex items-center gap-3">
             <Icon3D name="books" size={32} />
-            <h2 className="text-base font-bold tracking-tight">Next day plan</h2>
-            <Link to="/timetable" className="ml-auto font-mono text-[10px] text-brand uppercase">
-              timetable
+            <h2 className="text-xl font-bold tracking-tight">Your plan</h2>
+            <Link to="/timetable" className="ml-auto text-sm font-semibold text-brand">
+              Timetable
             </Link>
           </div>
-          <p className="mt-3 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-            Today · {DAYS[todayIdx]}
-          </p>
+          <p className="section-label mt-4">Today · {DAYS[todayIdx]}</p>
           <BlockList items={todayBlocks} empty="No blocks scheduled for today." />
-          <p className="mt-4 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-            Tomorrow · {DAYS[tomorrowIdx]}
-          </p>
+          <p className="section-label mt-5">Tomorrow · {DAYS[tomorrowIdx]}</p>
           <BlockList items={tomorrowBlocks} empty="Tomorrow is open — plan a reading block." />
         </section>
+
 
         {/* Analytics calendar */}
         <Reveal className="glass-panel p-5">

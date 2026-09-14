@@ -8,24 +8,24 @@ import { Button } from "@/components/ui/button";
 export type ActivityKind = "reading" | "revision" | "class" | "practice";
 
 const activityPositions: Record<ActivityKind, string> = {
-  reading: "object-[0%_0%]",
-  revision: "object-[100%_0%]",
-  class: "object-[0%_100%]",
-  practice: "object-[100%_100%]",
+  reading: "0% 0%",
+  revision: "100% 0%",
+  class: "0% 100%",
+  practice: "100% 100%",
 };
 
 export function ActivityArtwork({ kind, className }: { kind: ActivityKind; className?: string }) {
   return (
-    <span className={cn("relative block overflow-hidden", className)} aria-hidden="true">
-      <img
-        src={activityArt}
-        alt=""
-        width={1408}
-        height={1408}
-        loading="lazy"
-        className={cn("absolute size-[205%] max-w-none object-cover", activityPositions[kind])}
-      />
-    </span>
+    <span
+      className={cn("block bg-no-repeat", className)}
+      role="img"
+      aria-hidden="true"
+      style={{
+        backgroundImage: `url(${activityArt})`,
+        backgroundSize: "200% 200%",
+        backgroundPosition: activityPositions[kind],
+      }}
+    />
   );
 }
 

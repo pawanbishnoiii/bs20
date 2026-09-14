@@ -117,7 +117,7 @@ export async function dispatchDueNotifications() {
     try {
       await fanOutNotification({
         title: job.title,
-        body: job.body,
+        body: job.body ?? "",
         audience: (job.audience as "all" | "active" | "subscribers") ?? "all",
         actionPath: job.action_path,
         imageUrl: job.image_url,

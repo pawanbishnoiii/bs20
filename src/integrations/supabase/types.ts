@@ -75,7 +75,12 @@ export type Database = {
         Row: {
           accent_color: string
           ai_enabled: boolean
+          android_force_update: boolean
+          android_latest_version: string | null
+          android_min_version: string | null
+          android_update_url: string | null
           announcement_level: string
+          avatar_upload_enabled: boolean
           banner_text: string | null
           default_daily_goal_hours: number
           default_weekly_goal_hours: number
@@ -99,7 +104,12 @@ export type Database = {
         Insert: {
           accent_color?: string
           ai_enabled?: boolean
+          android_force_update?: boolean
+          android_latest_version?: string | null
+          android_min_version?: string | null
+          android_update_url?: string | null
           announcement_level?: string
+          avatar_upload_enabled?: boolean
           banner_text?: string | null
           default_daily_goal_hours?: number
           default_weekly_goal_hours?: number
@@ -123,7 +133,12 @@ export type Database = {
         Update: {
           accent_color?: string
           ai_enabled?: boolean
+          android_force_update?: boolean
+          android_latest_version?: string | null
+          android_min_version?: string | null
+          android_update_url?: string | null
           announcement_level?: string
+          avatar_upload_enabled?: boolean
           banner_text?: string | null
           default_daily_goal_hours?: number
           default_weekly_goal_hours?: number

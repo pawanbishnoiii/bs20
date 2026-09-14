@@ -29,13 +29,13 @@ async function fetchPlatformUsage(): Promise<{ platforms: Row[]; hosts: HostRow[
     const meta = (row.metadata ?? {}) as Meta;
     const key = meta.platform ?? "web";
     const p = byPlatform.get(key) ?? { users: new Set<string>(), events: 0 };
-    p.users.add(row.user_id);
+    p.users.add(row.user_id ?? "anonymous");
     p.events += 1;
     byPlatform.set(key, p);
 
     const host = meta.host ?? "unknown";
     const h = byHost.get(host) ?? { users: new Set<string>(), events: 0, versions: new Set<string>() };
-    h.users.add(row.user_id);
+    h.users.add(row.user_id ?? "anonymous");
     h.events += 1;
     if (meta.app_version) h.versions.add(meta.app_version);
     byHost.set(host, h);
