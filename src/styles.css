@@ -326,23 +326,30 @@
 :root {
   /* surfaces — exactly two elevation levels */
   --bg-base: #ffffff;
-  --bg-elevated: #eef2ff;
-  --border-subtle: #e3e7ef;
+  --bg-elevated: #f6f2ea;
+  --border-subtle: #ebe5da;
   --blur-glass: 20px;
 
-  /* accent — indigo → blue, primary CTA / active nav / fills / chart line */
-  --accent-start: #5b21f0;
-  --accent-end: #a021f0;
-  --accent-ai: oklch(0.67 0.18 330);
+  /* accent — near-black ink for primary actions, strong blue for active state */
+  --accent-start: #14151a;
+  --accent-end: #3a3b44;
+  --accent-active: #2563eb;
+  --accent-ai: #8b6fd6;
+
+  /* activity colours — reading / revision / class / test */
+  --activity-reading: #a9c9ff;
+  --activity-revision: #cbbbf3;
+  --activity-class: #c8f2df;
+  --activity-test: #ffe8a3;
 
   /* semantic states */
-  --state-hit: #a3e635;
-  --state-partial: #facc15;
-  --state-missed: #f472b6;
+  --state-hit: #55b487;
+  --state-partial: #e0a90a;
+  --state-missed: #d9789f;
 
   /* text */
-  --text-primary: #182230;
-  --text-muted: #596579;
+  --text-primary: #14151a;
+  --text-muted: #6b6b76;
 
   /* spacing scale */
   --space-1: 4px;
@@ -353,9 +360,9 @@
   --space-8: 32px;
 
   /* elevation — soft shadows instead of harsh borders */
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 8px 24px -16px rgb(15 23 42 / 0.18);
-  --shadow-hover: 0 2px 6px rgb(15 23 42 / 0.07), 0 16px 32px -18px rgb(15 23 42 / 0.24);
-  --shadow-glow: 0 0 0 8px rgb(139 92 246 / 0.16);
+  --shadow-card: 0 1px 2px rgb(20 21 26 / 0.04), 0 10px 28px -18px rgb(20 21 26 / 0.2);
+  --shadow-hover: 0 2px 6px rgb(20 21 26 / 0.06), 0 18px 36px -20px rgb(20 21 26 / 0.26);
+  --shadow-glow: 0 0 0 8px rgb(37 99 235 / 0.14);
 
   /* motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -365,13 +372,13 @@
   --dur-slow: 0.8s;
 
   /* map core surfaces onto the light palette */
-  --background: #f6f4ff;
-  --foreground: #182230;
+  --background: #fbf8f3;
+  --foreground: #14151a;
   --panel: #ffffff;
   --card: #ffffff;
   --popover: #ffffff;
-  --muted-foreground: #596579;
-  --border: #e3e7ef;
+  --muted-foreground: #6b6b76;
+  --border: #ebe5da;
 }
 
 /* Ambient app backdrop: fine slate grid + one soft indigo wash at the top. */
