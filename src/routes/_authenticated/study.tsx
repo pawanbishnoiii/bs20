@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Check, History } from "lucide-react";
+import { Check, Clock3, History, Search, Settings2 } from "lucide-react";
 import {
   currentBlock,
   fetchBlocks,
@@ -17,14 +17,15 @@ import {
   startOfToday,
 } from "@/lib/study";
 import { SubjectsManager } from "@/components/SubjectsManager";
-import { LottiePlayer } from "@/components/ui/lottie-player";
-import appointmentAnim from "@/assets/appointment-booking.json.asset.json";
+import { ActivityArtwork, PageHeader, ResponsiveSheet, type ActivityKind } from "@/components/study-ui";
+import { Button } from "@/components/ui/button";
+import learningPath from "@/assets/chronodeck-learning-path.png";
 
 const SESSION_KINDS = [
-  { k: "reading", l: "Reading", d: "Books & notes", emoji: "\u{1F4D6}" },
-  { k: "class", l: "Online class", d: "Live / recorded", emoji: "\u{1F3A7}" },
-  { k: "revision", l: "Revision", d: "Recall & re-read", emoji: "\u{1F501}" },
-  { k: "practice", l: "Practice", d: "Papers & problems", emoji: "\u{270F}\u{FE0F}" },
+  { k: "reading", l: "Reading", d: "Books, notes and articles", tint: "bg-yellow" },
+  { k: "revision", l: "Revision", d: "Recall and review", tint: "bg-lavender" },
+  { k: "class", l: "Online class", d: "Live or recorded lessons", tint: "bg-blue" },
+  { k: "practice", l: "Test / Practice", d: "Problems and papers", tint: "bg-mint" },
 ] as const;
 
 
@@ -59,6 +60,7 @@ function StudySetupPage() {
     planned_end_at: "",
   });
   const [subjectSheet, setSubjectSheet] = useState(false);
+  const [subjectSearch, setSubjectSearch] = useState("");
 
   const running = useQuery({ queryKey: ["running"], queryFn: fetchRunningSession });
   const subjects = useQuery({ queryKey: ["subjects"], queryFn: fetchSubjects });
@@ -118,46 +120,65 @@ function StudySetupPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const visibleSubjects = (subjects.data ?? []).filter((subject) =>
+    subject.name.toLowerCase().includes(subjectSearch.toLowerCase()),
+  );
+
   return (
-    <div className="flex w-full flex-col items-center px-4 pt-3 pb-8 text-foreground">
+    <div className="app-page text-foreground">
       <motion.div
         initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md"
+        className="w-full"
       >
-        <div className="pop-sheet p-5">
-          <div className="flex items-center gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="eyebrow">study mode</p>
-              <h1 className="mt-2 text-2xl font-bold">Set up your session</h1>
-              <p className="mt-1 text-xs text-muted-foreground">Subject, category aur focus time choose karo.</p>
-            </div>
-            <LottiePlayer src={appointmentAnim.url} className="size-24 shrink-0" />
+        <section className="relative overflow-hidden rounded-[36px] bg-blue-soft p-6 sm:p-8">
+          <div className="relative z-10 max-w-2xl">
+            <PageHeader eyebrow="Study launcher" title="What are we focusing on?" description="Choose an activity, then connect it to the right subject and chapter." />
           </div>
+          <img src={learningPath} alt="Student building a learning path with books" width={1200} height={1200} className="absolute -right-8 -bottom-24 hidden size-72 object-contain md:block" />
+        </section>
 
-          <div className="mt-5 flex items-center justify-between">
-            <label className="eyebrow">subject</label>
-            <button
-              type="button"
-              onClick={() => setSubjectSheet(true)}
-              className="rounded-full border border-border px-3 py-1.5 text-[11px] font-bold text-foreground"
-            >
-              + Add subject
-            </button>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2">
+        <div className="mt-6 grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="grid min-w-0 gap-6">
+            <section className="surface-card p-5 sm:p-6">
+              <h2 className="text-xl font-bold">1. Choose an activity</h2>
+              <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                {SESSION_KINDS.map((o) => {
+                  const on = form.kind === o.k;
+                  return (
+                    <motion.button key={o.k} type="button" whileTap={{ scale: 0.98 }} onClick={() => setForm({ ...form, kind: o.k })} aria-pressed={on} className={`min-w-0 overflow-hidden rounded-[24px] border-2 p-3 text-left transition ${on ? "border-foreground shadow-md" : "border-transparent bg-secondary hover:border-border"}`}>
+                      <ActivityArtwork kind={o.k as ActivityKind} className={`h-24 rounded-[18px] ${o.tint}`} />
+                      <span className="mt-3 block text-sm font-bold">{o.l}</span>
+                      <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">{o.d}</span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="surface-card p-5 sm:p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div><h2 className="text-xl font-bold">2. Pick a subject</h2><p className="mt-1 text-sm text-muted-foreground">Your saved subjects and syllabus stay connected.</p></div>
+                <Button variant="outline" size="sm" onClick={() => setSubjectSheet(true)}>Manage subjects</Button>
+              </div>
+              <label className="relative mt-4 block">
+                <Search className="absolute top-1/2 left-4 size-4 -translate-y-1/2 text-muted-foreground" />
+                <span className="sr-only">Search subjects</span>
+                <input value={subjectSearch} onChange={(e) => setSubjectSearch(e.target.value)} placeholder="Search subjects" className="field-control pl-11" />
+              </label>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {subjects.isLoading ? (
-              <div className="flex gap-2">
+              <div className="contents">
                 {[0, 1, 2].map((i) => (
-                  <span key={i} className="h-9 w-24 animate-pulse rounded-full bg-muted" />
+                  <span key={i} className="h-24 animate-pulse rounded-[22px] bg-muted" />
                 ))}
               </div>
             ) : null}
             {!subjects.isLoading && (subjects.data ?? []).length === 0 ? (
-              <p className="text-xs text-muted-foreground">Koi subject nahi — pehle ek subject add karo.</p>
+              <p className="text-sm text-muted-foreground">No subjects yet. Add one to connect your session to the syllabus.</p>
             ) : null}
-            {(subjects.data ?? []).map((x) => {
+            {visibleSubjects.map((x) => {
               const on = form.subject_id === x.id;
               return (
                 <motion.button
@@ -168,28 +189,29 @@ function StudySetupPage() {
                     setForm({ ...form, subject_id: x.id, subject_name: x.name, chapter: "" })
                   }
                   aria-pressed={on}
-                  className={`flex items-center gap-2 rounded-full border-2 px-3.5 py-2 text-xs font-bold transition ${
+                  className={`flex min-h-24 items-center gap-3 rounded-[22px] border-2 p-4 text-left transition ${
                     on
-                      ? "border-transparent bg-primary text-primary-foreground"
-                      : "border-border bg-secondary/60 text-muted-foreground"
+                      ? "border-foreground bg-lavender-soft text-foreground"
+                      : "border-border bg-panel text-foreground hover:bg-secondary"
                   }`}
                 >
-                  <span className="size-2.5 rounded-full" style={{ background: x.color }} />
-                  {x.name}
+                  <span className="grid size-11 shrink-0 place-items-center rounded-2xl text-lg font-extrabold" style={{ background: x.color }}>{x.name.slice(0, 1).toUpperCase()}</span>
+                  <span className="min-w-0"><span className="block truncate text-sm font-bold">{x.name}</span><span className="mt-1 block text-xs text-muted-foreground">{x.chapters.length} chapters</span></span>
+                  {on ? <Check className="ml-auto size-5 shrink-0" /> : null}
                 </motion.button>
               );
             })}
-          </div>
+              </div>
 
           {activeSubject ? (
             <div className="mt-4">
-              <label className="eyebrow">chapter</label>
+              <h3 className="text-sm font-bold">Chapter <span className="font-normal text-muted-foreground">(optional)</span></h3>
               {activeSubject.chapters.length === 0 ? (
                 <p className="mt-2 text-xs text-muted-foreground">
                   Is subject me chapters nahi — “+ Add subject” se chapters add karo.
                 </p>
               ) : (
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   {activeSubject.chapters.map((c) => {
                     const on = form.chapter === c;
                     return (
@@ -199,7 +221,7 @@ function StudySetupPage() {
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setForm({ ...form, chapter: on ? "" : c, topic: form.topic || c })}
                         aria-pressed={on}
-                        className={`flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5 text-[11px] font-bold transition ${
+                        className={`flex min-h-12 items-center gap-2 rounded-2xl border px-3 text-left text-sm font-semibold transition ${
                           on
                             ? "border-transparent bg-foreground text-background"
                             : "border-border bg-secondary/50 text-muted-foreground"
@@ -214,53 +236,37 @@ function StudySetupPage() {
               )}
             </div>
           ) : null}
+            </section>
 
-          <input
+            <section className="surface-card p-5 sm:p-6">
+              <div className="flex items-center gap-2"><Settings2 className="size-5" /><h2 className="text-xl font-bold">3. Session details</h2></div>
+              <label className="mt-4 block text-sm font-semibold" htmlFor="study-topic">Topic or notes</label>
+              <input id="study-topic"
             value={form.topic}
             onChange={(e) => setForm({ ...form, topic: e.target.value })}
             placeholder="Topic / notes"
-            className="mt-3 h-12 w-full rounded-full border-2 border-border bg-secondary/50 px-4 text-sm text-foreground placeholder:text-muted-foreground"
+            className="field-control mt-2"
           />
-
-
-          <label className="eyebrow mt-5 block">category</label>
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            {SESSION_KINDS.map((o) => {
-              const on = form.kind === o.k;
-              return (
-                <button
-                  key={o.k}
-                  onClick={() => setForm({ ...form, kind: o.k })}
-                  aria-pressed={on}
-                  className={`flex h-[78px] flex-col items-start justify-center gap-1 rounded-[24px] border px-3.5 text-left transition-all duration-200 active:scale-[0.98] ${
-                    on
-                      ? "border-transparent bg-primary/15 text-foreground shadow-[0_0_0_1.5px_var(--primary)]"
-                      : "border-border bg-secondary/40 text-muted-foreground"
-                  }`}
-                >
-                  <span className="text-lg leading-none">{o.emoji}</span>
-                  <span className="text-sm font-semibold">{o.l}</span>
-                  <span className="text-[10px] text-muted-foreground">{o.d}</span>
-                </button>
-              );
-            })}
+              <label className="mt-4 block text-sm font-semibold" htmlFor="study-end">Planned end <span className="font-normal text-muted-foreground">(optional)</span></label>
+              <input id="study-end" type="time" value={form.planned_end_at} onChange={(e) => setForm({ ...form, planned_end_at: e.target.value })} className="field-control mt-2 max-w-xs" />
+            </section>
           </div>
 
-          <motion.button
-            whileTap={{ scale: 0.96 }}
-            onClick={() => start.mutate()}
-            disabled={start.isPending}
-            className="btn-pop mt-5 w-full disabled:opacity-60"
-          >
-            {start.isPending ? "Starting…" : "Start timer"}
-          </motion.button>
-          <button onClick={() => navigate({ to: "/today" })} className="btn-ghost-pop mt-2 w-full">
-            Back to home
-          </button>
+          <aside className="sticky top-24 rounded-[30px] bg-dark-card p-6 text-white shadow-xl">
+            <p className="text-xs font-bold text-white/60">Session summary</p>
+            <h2 className="mt-3 text-2xl font-extrabold">{activeSubject?.name || form.subject_name || "Open study"}</h2>
+            <p className="mt-1 text-sm text-white/65">{form.chapter || form.topic || "Whole subject session"}</p>
+            <dl className="mt-6 grid gap-3 text-sm">
+              <div className="flex justify-between gap-3 border-b border-white/10 pb-3"><dt className="text-white/60">Activity</dt><dd className="font-semibold">{SESSION_KINDS.find((x) => x.k === form.kind)?.l}</dd></div>
+              <div className="flex justify-between gap-3 border-b border-white/10 pb-3"><dt className="text-white/60">Planned end</dt><dd className="font-semibold">{form.planned_end_at || "Open-ended"}</dd></div>
+            </dl>
+            <Button onClick={() => start.mutate()} disabled={start.isPending} className="mt-6 w-full bg-white text-foreground hover:bg-white/90"><Clock3 />{start.isPending ? "Starting…" : "Start session"}</Button>
+            <button onClick={() => navigate({ to: "/today" })} className="mt-3 min-h-11 w-full text-sm font-semibold text-white/60 hover:text-white">Back to home</button>
+          </aside>
         </div>
 
         {/* Session history — what got recorded from this page */}
-        <div className="pop-sheet mt-4 p-5">
+        <div className="surface-card mt-6 p-5 sm:p-6">
           <div className="flex items-center gap-2">
             <span className="grid size-9 place-items-center rounded-2xl bg-primary/12 text-primary">
               <History className="size-4.5" />
@@ -281,7 +287,7 @@ function StudySetupPage() {
             </p>
           ) : (
             <ul className="mt-4 grid gap-2">
-              {(recent.data ?? []).slice(0, 12).map((s) => (
+               {(recent.data ?? []).slice(0, 6).map((s) => (
                 <li
                   key={s.id}
                   className="flex items-center gap-3 rounded-2xl border-2 border-border bg-secondary/40 px-3.5 py-3"
@@ -307,31 +313,7 @@ function StudySetupPage() {
       </motion.div>
 
 
-      <AnimatePresence>
-        {subjectSheet ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] flex items-end bg-black/60 backdrop-blur-sm"
-            onClick={() => setSubjectSheet(false)}
-          >
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", stiffness: 420, damping: 38, mass: 0.9 }}
-              drag="y"
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={{ top: 0, bottom: 0.4 }}
-              onDragEnd={(_, info) => {
-                if (info.offset.y > 120 || info.velocity.y > 700) setSubjectSheet(false);
-              }}
-              onClick={(e) => e.stopPropagation()}
-              className="max-h-[85vh] w-full touch-pan-y overflow-y-auto rounded-t-[40px] bg-background p-5 pb-[calc(1.5rem+env(safe-area-inset-bottom))] text-foreground shadow-[0_-24px_60px_-30px_rgb(0_0_0_/_0.6)]"
-            >
-              <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-border" />
-
+      <ResponsiveSheet open={subjectSheet} onClose={() => setSubjectSheet(false)} title="Manage subjects" description="Add subjects and keep chapter lists up to date.">
               <SubjectsManager
                 selectedId={form.subject_id}
                 onSelect={(s) => {
@@ -339,17 +321,8 @@ function StudySetupPage() {
                   setSubjectSheet(false);
                 }}
               />
-              <button
-                type="button"
-                onClick={() => setSubjectSheet(false)}
-                className="mt-4 h-12 w-full rounded-full border border-border text-sm font-semibold"
-              >
-                Done
-              </button>
-            </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+              <Button type="button" variant="outline" onClick={() => setSubjectSheet(false)} className="mt-4 w-full">Done</Button>
+      </ResponsiveSheet>
     </div>
   );
 }

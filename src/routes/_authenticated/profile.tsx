@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { Icon3D } from "@/components/Icon3D";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { PushToggle } from "@/components/PushToggle";
+import { PageHeader } from "@/components/study-ui";
+import { Button } from "@/components/ui/button";
 import { FormSkeleton, Skeleton, SoftCard, StatsSkeleton } from "@/components/ui/skeletons";
 
 import {
@@ -83,7 +85,7 @@ function ProfilePage() {
   const all = sessions.data ?? [];
   const total = all.reduce((a, s) => a + (s.duration_minutes ?? 0), 0);
   const week = minutesInRange(all, startOfWeek());
-  const field = "input";
+  const field = "field-control";
 
   const stats = [
     { l: "Recent total", v: fmtHM(total), tint: "tint-lavender" },
@@ -109,9 +111,10 @@ function ProfilePage() {
   }
 
   return (
-    <div className="space-y-5 px-4 py-6">
+    <div className="app-page space-y-6">
+      <PageHeader eyebrow="Account" title="Your study profile" description="Manage your identity, preferences and notifications." />
 
-      <section className="pop-sheet p-6">
+      <section className="relative overflow-hidden rounded-[32px] bg-peach p-6 sm:p-8">
         <div className="relative flex items-center gap-4">
           <span className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-[22px] bg-background/70 shadow-[var(--shadow-card)]">
             {profile.data?.avatar_url ? (
@@ -136,16 +139,16 @@ function ProfilePage() {
         </div>
 
         {admin.data ? (
-          <Link to="/admin" className="btn-pop mt-5 w-full">
+          <Link to="/admin" className="mt-5 inline-flex min-h-11 items-center rounded-full border border-foreground/15 px-5 text-sm font-semibold">
             Open admin console
           </Link>
         ) : null}
       </section>
 
       {/* Bento stats */}
-      <section className="grid grid-cols-3 gap-3">
+      <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {stats.map((s) => (
-          <div key={s.l} className={`pop-tile ${s.tint} text-[var(--pop-ink)] dark:text-foreground`}>
+          <div key={s.l} className={`rounded-[22px] p-5 ${s.tint} text-[var(--pop-ink)] dark:text-foreground`}>
             <p className="num text-lg leading-none font-extrabold">{s.v}</p>
             <p className="mt-1.5 text-[10px] font-semibold tracking-wide uppercase opacity-70">{s.l}</p>
           </div>
@@ -156,23 +159,23 @@ function ProfilePage() {
 
       <PushToggle />
 
-      <section className="glass-panel p-5">
+      <section className="surface-card p-5 sm:p-7">
         <h2 className="text-base font-bold tracking-tight">Personal details</h2>
         <p className="mt-0.5 text-xs text-muted-foreground">Ye details tumhare plan aur AI coach ko sharp banati hain.</p>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <input
+          <label className="text-sm font-semibold">First name<input
             className={field}
             placeholder="First name"
             value={form.first_name}
             onChange={(e) => { setDirty(true); setForm({ ...form, first_name: e.target.value }); }}
-          />
-          <input
+          /></label>
+          <label className="text-sm font-semibold">Last name<input
             className={field}
             placeholder="Last name"
             value={form.last_name}
             onChange={(e) => { setDirty(true); setForm({ ...form, last_name: e.target.value }); }}
-          />
+          /></label>
         </div>
         <select
           className={`${field} mt-2`}
@@ -220,9 +223,9 @@ function ProfilePage() {
           />
         </div>
 
-        <button onClick={() => save.mutate()} disabled={save.isPending} className="btn-pop mt-5 w-full">
+        <Button onClick={() => save.mutate()} disabled={save.isPending || !dirty} className="mt-5 sm:w-auto">
           {save.isPending ? "Saving…" : dirty ? "Save profile" : "Saved"}
-        </button>
+        </Button>
       </section>
     </div>
   );

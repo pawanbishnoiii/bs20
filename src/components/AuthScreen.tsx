@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { GoogleOneTap } from "@/components/GoogleOneTap";
-import teacher from "@/assets/auth-teacher.png";
+import authStudent from "@/assets/chronodeck-auth-student.png";
 import appLogo from "@/assets/chronodeck-logo.png";
 
 function GoogleMark() {
@@ -151,10 +151,10 @@ export function AuthScreen() {
     "h-13 w-full rounded-2xl bg-secondary px-4 text-[15px] font-medium text-foreground placeholder:text-muted-foreground outline-none ring-1 ring-transparent transition focus:ring-2 focus:ring-ring";
 
   return (
-    <div className="relative flex min-h-[100svh] flex-col overflow-hidden bg-[#f2f0ff] dark:bg-background">
+    <div className="relative flex min-h-[100svh] flex-col overflow-hidden bg-blue-soft dark:bg-background md:grid md:grid-cols-[minmax(0,1fr)_minmax(420px,0.8fr)]">
       <GoogleOneTap />
 
-      <header className="relative z-10 flex items-center justify-between px-5 pt-[calc(1rem+env(safe-area-inset-top))]">
+      <header className="relative z-10 flex items-center justify-between px-5 pt-[calc(1rem+env(safe-area-inset-top))] md:absolute md:inset-x-0 md:top-0 md:px-10">
         <div className="flex items-center gap-2.5">
           <img
             src={appLogo}
@@ -176,22 +176,22 @@ export function AuthScreen() {
       </header>
 
       {/* Landing hero */}
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-end px-6 pb-6 text-center md:mr-[50vw] md:justify-center">
+      <main className="relative z-10 flex min-h-[43svh] flex-1 flex-col items-center justify-end px-6 pb-7 text-center md:min-h-screen md:justify-center md:px-12 md:pb-10">
         <motion.img
-          src={teacher}
-          alt="3D illustration of a teacher beside a whiteboard with books"
+          src={authStudent}
+          alt="Student studying beside books and a desk"
           width={1024}
           height={1024}
           initial={{ opacity: 0, y: 20, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="max-h-[42svh] w-full max-w-[440px] object-contain"
+          className="max-h-[48svh] w-full max-w-[560px] object-contain"
         />
         <motion.h1
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.08 }}
-          className="font-heading mt-2 text-[30px] leading-[1.08] font-extrabold tracking-tight text-foreground"
+          className="font-heading mt-1 text-[clamp(2rem,4vw,4.5rem)] leading-[1.02] font-extrabold tracking-tight text-foreground"
         >
           Study smart.
           <br />
@@ -236,7 +236,7 @@ export function AuthScreen() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 flex items-end bg-black/45 md:items-stretch md:justify-end md:bg-transparent"
+            className="fixed inset-0 z-40 flex items-end bg-black/45 md:static md:z-10 md:items-stretch md:bg-transparent"
             onClick={() => setSheet(false)}
           >
             <motion.section
@@ -251,7 +251,7 @@ export function AuthScreen() {
                 if (info.offset.y > 120 || info.velocity.y > 700) setSheet(false);
               }}
               onClick={(e) => e.stopPropagation()}
-              className="max-h-[92svh] w-full touch-pan-y overflow-y-auto rounded-t-[28px] border-border bg-panel px-5 pt-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[0_-24px_60px_-30px_rgb(0_0_0_/_0.5)] md:max-h-none md:w-1/2 md:max-w-2xl md:rounded-none md:border-l md:px-[clamp(2rem,6vw,5rem)] md:py-16 md:shadow-none"
+              className="max-h-[92svh] w-full touch-pan-y overflow-y-auto rounded-t-[32px] border-border bg-panel px-5 pt-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[0_-24px_60px_-30px_rgb(0_0_0_/_0.5)] md:max-h-none md:w-full md:rounded-l-[48px] md:rounded-tr-none md:border-l md:px-[clamp(2rem,5vw,4.5rem)] md:py-24 md:shadow-xl"
             >
               <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-border md:hidden" />
               <p className="mb-2 hidden text-sm font-semibold text-primary md:block">

@@ -3,6 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Icon3D } from "@/components/Icon3D";
+import { EmptyState, PageHeader, ResponsiveSheet, SegmentedControl } from "@/components/study-ui";
+import { Button } from "@/components/ui/button";
+import emptyCalendar from "@/assets/chronodeck-empty-calendar.png";
 import {
   DAYS,
   createBlock,
@@ -119,44 +122,14 @@ function TimetablePage() {
   }
 
   return (
-    <>
-      <div className="space-y-6 px-4 py-6 sm:px-5">
-        <header className="relative overflow-hidden rounded-[28px] bg-sky-500 p-5 text-white shadow-xl shadow-sky-500/15">
-          <div className="absolute -right-8 -top-10 size-32 rounded-full bg-white/15" />
-          <div className="relative flex items-center gap-3">
-            <span className="grid size-14 place-items-center rounded-2xl bg-white/18 ring-1 ring-white/25">
-              <Icon3D name="calendar" size={40} priority />
-            </span>
-            <div className="min-w-0">
-              <p className="text-[10px] font-black tracking-[.18em] text-sky-100 uppercase">
-                Weekly rhythm
-              </p>
-              <h1 className="text-2xl font-black tracking-tight">Timetable</h1>
-              <p className="mt-1 text-xs text-sky-50/85">
-                Drag to reorder, tap Start — the timer picks the block's start and end time.
-              </p>
-            </div>
-          </div>
-        </header>
+    <div className="app-page">
+      <div className="space-y-6">
+        <PageHeader eyebrow="Weekly rhythm" title="Your learning agenda" description="Plan focused blocks, reorder them accessibly, and start with the planned end time." action={<Button onClick={() => setOpen(true)}>Add block</Button>} />
 
-        <div className="grid grid-cols-2 gap-2">
-          {(["list", "calendar"] as const).map((v) => (
-            <button
-              key={v}
-              onClick={() => setView(v)}
-              className={`h-10 rounded-xl border text-xs font-medium capitalize transition-colors ${
-                view === v
-                  ? "border-brand bg-brand/10 text-brand"
-                  : "border-border text-muted-foreground"
-              }`}
-            >
-              {v} view
-            </button>
-          ))}
-        </div>
+        <SegmentedControl value={view} onChange={setView} label="Timetable view" options={[{ value: "list", label: "Agenda" }, { value: "calendar", label: "Calendar" }]} />
 
         {/* week strip */}
-        <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
+        <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0"><div className="grid min-w-[560px] grid-cols-7 gap-2">
           {ORDER.map((d) => {
             const count = all.filter((b) => b.day_of_week === d).length;
             const active = d === day;
@@ -166,7 +139,7 @@ function TimetablePage() {
                 onClick={() => setDay(d)}
                 className={`min-h-16 rounded-2xl border p-1.5 text-center transition-all sm:p-2 ${
                   active
-                    ? "border-slate-950 bg-slate-950 text-white shadow-lg dark:border-indigo-400 dark:bg-indigo-500"
+                    ? "border-foreground bg-foreground text-background shadow-lg"
                     : "border-border bg-panel shadow-sm"
                 }`}
               >
@@ -179,20 +152,20 @@ function TimetablePage() {
               </button>
             );
           })}
-        </div>
+        </div></div>
 
         {view === "calendar" ? (
           <CalendarWeek blocks={all} onPick={(d) => setDay(d)} onStart={startBlock} />
         ) : (
-          <section className="glass-panel p-4 sm:p-5">
+          <section className="surface-card p-4 sm:p-6">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-base font-bold tracking-tight">{DAYS[day]} schedule</h2>
-              <button
+              <Button
                 onClick={() => setOpen(true)}
-                className="h-9 shrink-0 rounded-xl bg-brand px-4 text-xs font-semibold text-brand-foreground"
+                size="sm"
               >
                 Add block
-              </button>
+              </Button>
             </div>
 
             {order.length ? (
@@ -275,9 +248,7 @@ function TimetablePage() {
                 ))}
               </ul>
             ) : (
-              <p className="mt-4 text-xs text-muted-foreground">
-                Nothing planned for {DAYS[day]}. Add a reading block or online class.
-              </p>
+              <EmptyState image={emptyCalendar} title={`Nothing planned for ${DAYS[day]}`} description="Add a reading block or online class to shape the day." action={<Button onClick={() => setOpen(true)}>Add block</Button>} />
             )}
 
             <Link
@@ -290,17 +261,7 @@ function TimetablePage() {
         )}
       </div>
 
-      {open ? (
-        <div
-          className="fixed inset-0 z-[80] flex items-end bg-foreground/25 backdrop-blur-sm"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[88svh] w-full overflow-y-auto rounded-t-3xl border-t border-border bg-panel p-5 pb-[calc(2.5rem+env(safe-area-inset-bottom))]"
-          >
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-border" />
-            <h3 className="text-sm font-bold tracking-tight">New block · {DAYS[day]}</h3>
+      <ResponsiveSheet open={open} onClose={() => setOpen(false)} title={`New block · ${DAYS[day]}`} description="Add this block to your weekly learning rhythm.">
 
             <label className="mt-4 block text-xs text-muted-foreground">Subject</label>
             <select
@@ -369,17 +330,15 @@ function TimetablePage() {
               className="input mt-1"
             />
 
-            <button
+             <Button
               onClick={() => add.mutate()}
               disabled={add.isPending}
-              className="mt-5 btn-pop w-full  disabled:opacity-60"
+               className="mt-5 w-full"
             >
               {add.isPending ? "Saving…" : "Add to timetable"}
-            </button>
-          </div>
-        </div>
-      ) : null}
-    </>
+             </Button>
+      </ResponsiveSheet>
+    </div>
   );
 }
 
@@ -397,7 +356,7 @@ function CalendarWeek({
   const span = (endHour - startHour) * 60;
 
   return (
-    <section className="glass-panel p-3 sm:p-4">
+    <section className="surface-card p-3 sm:p-5">
       <h2 className="text-base font-bold tracking-tight">Week calendar</h2>
       <div className="mt-3 overflow-x-auto">
         <div className="flex min-w-[560px] gap-1">

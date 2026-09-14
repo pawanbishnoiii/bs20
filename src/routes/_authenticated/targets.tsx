@@ -17,6 +17,9 @@ import {
 } from "@/lib/study";
 import { ProgressRing } from "@/components/motion/gsap-bits";
 import { SubjectsManager } from "@/components/SubjectsManager";
+import { EmptyState, PageHeader, ResponsiveSheet } from "@/components/study-ui";
+import { Button } from "@/components/ui/button";
+import emptyCalendar from "@/assets/chronodeck-empty-calendar.png";
 
 const EIGHT_WEEKS = new Date(Date.now() - 8 * 7 * 864e5).toISOString();
 
@@ -80,46 +83,32 @@ function TargetsPage() {
   });
 
   return (
-    <>
-      <section className="px-4 pt-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight">Targets</h1>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Daily and weekly goals the AI compares against real study time.
-            </p>
-          </div>
-          <button
-            onClick={() => setOpen(true)}
-            className="h-10 shrink-0 rounded-xl bg-brand px-4 text-sm font-semibold whitespace-nowrap text-brand-foreground"
-          >
-            New target
-          </button>
-        </div>
+    <div className="app-page">
+      <PageHeader eyebrow="Goals" title="Targets that stay realistic" description="Compare planned study time with real sessions and keep your syllabus visible." action={<Button onClick={() => setOpen(true)}>New target</Button>} />
 
-        {/* Hero — weekly completion ring */}
-        <div className="gradient-border mt-5 rounded-2xl p-6">
+        <section className="mt-6 grid gap-4 rounded-[32px] bg-lavender-soft p-5 sm:grid-cols-[auto_1fr] sm:items-center sm:p-7">
           <ProgressRing
             pct={weekPct}
             label="This week"
             sub={`${fmtHM(weekMin)} / ${fmtHM(weeklyGoal * 60)}`}
           />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3"><div className="rounded-2xl bg-panel p-4"><p className="text-xs text-muted-foreground">Actual this week</p><p className="mt-1 text-xl font-extrabold">{fmtHM(weekMin)}</p></div><div className="rounded-2xl bg-panel p-4"><p className="text-xs text-muted-foreground">Weekly goal</p><p className="mt-1 text-xl font-extrabold">{fmtHM(weeklyGoal * 60)}</p></div><div className="col-span-2 rounded-2xl bg-dark-card p-4 text-white sm:col-span-1"><p className="text-xs text-white/60">Remaining</p><p className="mt-1 text-xl font-extrabold">{fmtHM(Math.max(0, weeklyGoal * 60 - weekMin))}</p></div></div>
+      </section>
+
+      <section className="surface-card mt-6 p-5 sm:p-6">
+        <h2 className="text-xl font-bold">Subjects and chapters</h2>
+        <p className="mt-1 text-sm text-muted-foreground">Study time and chapter completion are tracked separately.</p>
+        <div className="mt-5">
+        <SubjectsManager />
         </div>
       </section>
 
-      <section className="mt-5 px-4">
-        <SubjectsManager />
-      </section>
-
-      <section className="mt-5 space-y-3 px-5">
+      <section className="mt-6 grid gap-4 md:grid-cols-2">
         {(targets.data ?? []).length === 0 && (
-          <div className="glass-panel p-6 text-center">
-            <p className="text-sm text-muted-foreground">No targets yet.</p>
-            <p className="mt-1 text-xs text-muted-foreground">Add your first goal to unlock AI insights.</p>
-          </div>
+          <div className="surface-card md:col-span-2"><EmptyState image={emptyCalendar} title="No targets yet" description="Add a realistic daily or weekly goal to compare against your study sessions." action={<Button onClick={() => setOpen(true)}>Create target</Button>} /></div>
         )}
         {(targets.data ?? []).map((t) => (
-          <div key={t.id} className="glass-panel p-4">
+          <article key={t.id} className={`surface-card p-5 ${t.is_active ? "bg-blue-soft" : "opacity-70"}`}>
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
@@ -152,19 +141,19 @@ function TargetsPage() {
             </div>
 
             <TargetProgressBars target={t} sessions={sessions.data ?? []} />
-          </div>
+          </article>
         ))}
       </section>
 
-      {open && (
-        <AddTargetSheet
+      <ResponsiveSheet open={open} onClose={() => setOpen(false)} title="New target" description="Set a measurable time goal without implying syllabus mastery.">
+        <AddTargetForm
           subjects={subjects.data ?? []}
           busy={createM.isPending}
           onClose={() => setOpen(false)}
           onAdd={(v) => createM.mutate(v)}
         />
-      )}
-    </>
+      </ResponsiveSheet>
+    </div>
   );
 }
 
@@ -201,7 +190,7 @@ function TargetProgressBars({
   );
 }
 
-function AddTargetSheet({
+function AddTargetForm({
   subjects,
   busy,
   onClose,
@@ -232,10 +221,7 @@ function AddTargetSheet({
       ? "Weekly hours must be between 0 and 168."
       : !title?.trim() ? "Choose a subject or enter a target title." : null;
   return (
-    <div className="fixed inset-0 z-[80] flex items-end bg-foreground/25 backdrop-blur-sm">
-      <div className="max-h-[88svh] w-full overflow-y-auto rounded-t-3xl border-t border-border bg-panel p-5 pb-[calc(2.5rem+env(safe-area-inset-bottom))]">
-        <h3 className="text-base font-semibold tracking-tight">New target</h3>
-        <div className="mt-4 space-y-3">
+    <div className="space-y-3">
           <select value={subjectId} onChange={(e) => setSubjectId(e.target.value)} className={inputCls}>
             <option value="">Custom title</option>
             {subjects.map((s) => (
@@ -307,8 +293,6 @@ function AddTargetSheet({
               Save target
             </button>
           </div>
-        </div>
-      </div>
     </div>
   );
 }

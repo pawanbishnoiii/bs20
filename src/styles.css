@@ -57,6 +57,16 @@
   --color-sidebar-accent-foreground: var(--accent-foreground);
   --color-sidebar-border: var(--border);
   --color-sidebar-ring: var(--ring);
+  --color-overlay: var(--overlay);
+  --color-lavender: var(--lavender);
+  --color-lavender-soft: var(--lavender-soft);
+  --color-blue: var(--blue);
+  --color-blue-soft: var(--blue-soft);
+  --color-pink: var(--pink);
+  --color-yellow: var(--yellow);
+  --color-mint: var(--mint);
+  --color-peach: var(--peach);
+  --color-dark-card: var(--dark-card);
 }
 
 :root {
@@ -67,9 +77,9 @@
   --font-mono-family: "Inter", ui-monospace, monospace;
 
   /* Warm paper canvas, layered white cards, pastel accents, near-black ink. */
-  --background: #fbf8f3;
-  --foreground: #14151a;
-  --panel: #ffffff;
+  --background: oklch(0.976 0.004 100);
+  --foreground: oklch(0.205 0 0);
+  --panel: oklch(1 0 0);
   --brand: #14151a;
   --brand-foreground: #ffffff;
   --warm: #e0a90a;
@@ -80,19 +90,29 @@
   --popover-foreground: #14151a;
   --primary: #14151a;
   --primary-foreground: #ffffff;
-  --secondary: #f2eee7;
+  --secondary: oklch(0.955 0.006 286);
   --secondary-foreground: #14151a;
-  --muted: #f2eee7;
-  --muted-foreground: #6b6b76;
-  --accent: #ece4fb;
+  --muted: oklch(0.955 0.006 286);
+  --muted-foreground: oklch(0.49 0.015 286);
+  --accent: oklch(0.94 0.035 300);
   --accent-foreground: #14151a;
   --destructive: #c2410c;
   --destructive-foreground: #ffffff;
   --success: #0f766e;
   --warning: #b45309;
-  --border: #ebe5da;
+  --border: oklch(0.91 0.008 286);
   --input: rgb(20 21 26 / 0.12);
-  --ring: color-mix(in oklab, #2563eb 45%, transparent);
+  --ring: oklch(0.62 0.19 258 / 0.55);
+  --overlay: oklch(0.18 0.01 286 / 0.42);
+  --lavender: oklch(0.82 0.082 300);
+  --lavender-soft: oklch(0.94 0.035 300);
+  --blue: oklch(0.81 0.084 257);
+  --blue-soft: oklch(0.94 0.035 257);
+  --pink: oklch(0.86 0.073 322);
+  --yellow: oklch(0.91 0.09 93);
+  --mint: oklch(0.89 0.064 158);
+  --peach: oklch(0.87 0.064 60);
+  --dark-card: oklch(0.24 0.018 270);
 }
 
 @layer base {
@@ -117,6 +137,12 @@
     text-rendering: optimizeLegibility;
   }
 
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
   /* Urbanist carries the headings; sizes use fixed line-heights so swapping in the
      webfont never shifts layout. */
   h1,
@@ -128,6 +154,44 @@
     line-height: 1.15;
     font-synthesis-weight: none;
   }
+}
+
+@utility surface-card {
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--panel);
+  box-shadow: var(--shadow-card);
+}
+
+@utility section-label {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+@utility field-control {
+  width: 100%;
+  min-height: 3rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--secondary);
+  padding-inline: 1rem;
+  color: var(--foreground);
+  outline: none;
+  &:focus {
+    border-color: var(--accent-active);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-active) 18%, transparent);
+  }
+}
+
+@utility app-page {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: 1.5rem 1rem 2rem;
+  @media (min-width: 768px) { padding: 2rem 1.5rem 3rem; }
+  @media (min-width: 1280px) { padding-inline: 2rem; }
 }
 
 @utility grid-lines {
@@ -337,10 +401,10 @@
   --accent-ai: #8b6fd6;
 
   /* activity colours — reading / revision / class / test */
-  --activity-reading: #a9c9ff;
-  --activity-revision: #cbbbf3;
-  --activity-class: #c8f2df;
-  --activity-test: #ffe8a3;
+  --activity-reading: var(--yellow);
+  --activity-revision: var(--lavender);
+  --activity-class: var(--blue);
+  --activity-test: var(--mint);
 
   /* semantic states */
   --state-hit: #55b487;
