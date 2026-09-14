@@ -5,17 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Chronodeck design system — dark technical focus.
+ * Ink surfaces, emerald brand, warm amber accent.
+ * Space Grotesk (display) + IBM Plex Mono (data).
  */
 
 @theme inline {
@@ -25,9 +17,15 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --font-display: var(--font-display-family);
+  --font-mono: var(--font-mono-family);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-ink: var(--background);
+  --color-panel: var(--panel);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-warm: var(--warm);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -46,90 +44,55 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-ring-offset-background: var(--background);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--brand);
+  --color-chart-2: var(--warm);
+  --color-chart-3: var(--muted-foreground);
+  --color-chart-4: var(--brand);
+  --color-chart-5: var(--warm);
+  --color-sidebar: var(--panel);
+  --color-sidebar-foreground: var(--foreground);
+  --color-sidebar-primary: var(--brand);
+  --color-sidebar-primary-foreground: var(--brand-foreground);
+  --color-sidebar-accent: var(--accent);
+  --color-sidebar-accent-foreground: var(--accent-foreground);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--ring);
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
-}
+  --radius: 0.75rem; /* 12px — buttons, chips, controls */
+  --radius-card: 28px; /* cards, panels */
+  --font-display-family: "Inter", "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
+  --font-heading-family: "Inter", "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
+  --font-mono-family: "JetBrains Mono", ui-monospace, monospace;
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  /* Bright study desk — cool canvas, deep ink actions, sky blue accent. */
+  --background: #f6f4ff;
+  --foreground: #182230;
+  --panel: #ffffff;
+  --brand: #5b21f0;
+  --brand-foreground: oklch(1 0 0);
+  --warm: oklch(0.82 0.16 82);
+
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #5b21f0;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.02 240);
+  --secondary-foreground: #0f172a;
+  --muted: oklch(0.95 0.014 245);
+  --muted-foreground: #596579;
+  --accent: oklch(0.9 0.09 292);
+  --accent-foreground: oklch(0.42 0.16 246);
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --success: #0f766e;
+  --warning: #b45309;
+  --border: #e3e7ef;
+  --input: rgb(15 23 42 / 0.12);
+  --ring: color-mix(in oklab, var(--brand) 36%, transparent);
 }
 
 @layer base {
@@ -137,8 +100,512 @@
     border-color: var(--color-border);
   }
 
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-display-family);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
+
+  /* Urbanist carries the headings; sizes use fixed line-heights so swapping in the
+     webfont never shifts layout. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    font-synthesis-weight: none;
+  }
+}
+
+@utility grid-lines {
+  background-image: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--foreground) 5%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--foreground) 5%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 44px 44px;
+}
+
+@layer base {
+  html {
+    /* Native scrolling only — CSS smooth-scroll fights touch momentum and
+       costs frames on low-end phones. */
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--foreground) 14%, transparent);
+    border-radius: 999px;
+  }
+}
+
+.input {
+  height: 2.75rem;
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background);
+  padding-inline: 1rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition:
+    border-color var(--dur-fast, 0.25s) ease,
+    box-shadow var(--dur-fast, 0.25s) ease;
+}
+
+.input:focus {
+  border-color: color-mix(in oklab, var(--brand) 55%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand) 14%, transparent);
+}
+
+/* ---------- Soft Neo-Pop layer ---------- */
+
+/* Pastel accent tints used across bento cards and chips. */
+:root {
+  --pop-lavender: oklch(0.88 0.11 292);
+  --pop-sky: oklch(0.88 0.12 235);
+  --pop-lilac: oklch(0.9 0.09 315);
+  --pop-mint: oklch(0.88 0.15 155);
+  --pop-mustard: oklch(0.9 0.17 92);
+  --pop-coral: oklch(0.87 0.14 22);
+  --pop-ink: oklch(0.2 0.035 255);
+}
+
+.dark {
+  --pop-lavender: #2a2547;
+  --pop-sky: #16304a;
+  --pop-lilac: #2c2340;
+  --pop-mint: #22381d;
+  --pop-mustard: #3d3218;
+  --pop-coral: #3d2030;
+  --pop-ink: #0b0d12;
+}
+
+/** Big rounded sheet with a soft pastel wash — hero / feature blocks. */
+@utility pop-sheet {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-base);
+  box-shadow: var(--shadow-card);
+}
+
+/** Flat pastel tile — bento stats and category cards. */
+@utility pop-tile {
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  padding: 1rem;
+  box-shadow: 0 10px 24px -20px rgb(15 23 42 / 0.5);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+@utility pop-tile-press {
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+@utility tint-lavender {
+  background: var(--pop-lavender);
+}
+@utility tint-sky {
+  background: var(--pop-sky);
+}
+@utility tint-lilac {
+  background: var(--pop-lilac);
+}
+@utility tint-mint {
+  background: var(--pop-mint);
+}
+@utility tint-mustard {
+  background: var(--pop-mustard);
+}
+@utility tint-coral {
+  background: var(--pop-coral);
+}
+
+/** Dark contrast card (progress / highlight blocks). */
+@utility pop-dark {
+  border-radius: 24px;
+  background: var(--pop-ink);
+  color: var(--brand-foreground);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: 0 24px 44px -28px rgb(9 11 20 / 0.85);
+}
+
+/** Primary pill button with gradient fill and springy press. */
+@utility btn-pop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3.25rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #fff;
+  background: var(--foreground);
+  box-shadow: 0 14px 26px -16px color-mix(in oklab, var(--accent-start) 85%, transparent);
+  transition:
+    transform 0.22s var(--ease-out),
+    box-shadow 0.22s var(--ease-out),
+    filter 0.22s var(--ease-out);
+  &:hover {
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: scale(0.97);
+  }
+  &:disabled {
+    opacity: 0.6;
+    transform: none;
+  }
+}
+
+/** Secondary pill (outline). */
+@utility btn-ghost-pop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  height: 3.25rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1px solid var(--border);
+  background: var(--bg-base);
+  transition: transform 0.2s var(--ease-out);
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+/** Small uppercase label above a section. */
+@utility eyebrow {
+  font-family: var(--font-mono-family);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+
+/* ---------- Chronodeck cockpit layer: surfaces, gradients, motion ---------- */
+:root {
+  /* surfaces — exactly two elevation levels */
+  --bg-base: #ffffff;
+  --bg-elevated: #eef2ff;
+  --border-subtle: #e3e7ef;
+  --blur-glass: 20px;
+
+  /* accent — indigo → blue, primary CTA / active nav / fills / chart line */
+  --accent-start: #5b21f0;
+  --accent-end: #a021f0;
+  --accent-ai: oklch(0.67 0.18 330);
+
+  /* semantic states */
+  --state-hit: #a3e635;
+  --state-partial: #facc15;
+  --state-missed: #f472b6;
+
+  /* text */
+  --text-primary: #182230;
+  --text-muted: #596579;
+
+  /* spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* elevation — soft shadows instead of harsh borders */
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 8px 24px -16px rgb(15 23 42 / 0.18);
+  --shadow-hover: 0 2px 6px rgb(15 23 42 / 0.07), 0 16px 32px -18px rgb(15 23 42 / 0.24);
+  --shadow-glow: 0 0 0 8px rgb(139 92 246 / 0.16);
+
+  /* motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.25s;
+  --dur-base: 0.4s;
+  --dur-slow: 0.8s;
+
+  /* map core surfaces onto the light palette */
+  --background: #f6f4ff;
+  --foreground: #182230;
+  --panel: #ffffff;
+  --card: #ffffff;
+  --popover: #ffffff;
+  --muted-foreground: #596579;
+  --border: #e3e7ef;
+}
+
+/* Ambient app backdrop: fine slate grid + one soft indigo wash at the top. */
+@utility app-backdrop {
+  position: relative;
+  background-color: var(--background);
+  background-image: none;
+  background-size: 100% 100%;
+  /* `fixed` forces a full-viewport repaint on every scroll frame (very janky on
+     mobile). Scrolling with the content is visually identical here and cheap. */
+  background-attachment: scroll, scroll, scroll;
+}
+
+/* Smooth-scroll baseline: momentum on iOS, no rubber-band chaining, and a hint
+   to the compositor that the page scrolls. */
+html {
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+  /* NOTE: never set `content-visibility`/`contain` on <body> or on cards that
+     may host a portal — containment makes them the containing block for
+     position:fixed, which parks the bottom nav at the end of the document
+     instead of pinning it to the viewport. */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+
+@utility gradient-border {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(color-mix(in oklab, var(--panel) 88%, transparent), color-mix(in oklab, var(--panel) 88%, transparent))
+      padding-box,
+    linear-gradient(135deg, color-mix(in oklab, var(--accent-start) 55%, transparent), color-mix(in oklab, var(--accent-end) 45%, transparent))
+      border-box;
+  box-shadow: var(--shadow-card);
+}
+
+@utility gradient-text {
+  background: linear-gradient(120deg, var(--accent-start), var(--accent-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility gradient-bar {
+  background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+}
+
+
+
+/* Level 1 surface — every card in the app. No screen ever mixes card radii. */
+@utility glass-panel {
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+  border-radius: 24px !important;
+  transition: box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+/* Level 2 surface — raised elements inside a card (chips wells, sheets). */
+@utility lift {
+  transition: box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  &:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+}
+
+@utility card-raised {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+}
+
+/* Violet accent reserved exclusively for the AI coach. */
+@utility ai-accent {
+  border: 1px solid color-mix(in oklab, var(--accent-ai) 45%, transparent);
+  color: var(--accent-ai);
+}
+
+@utility shimmer {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--bg-elevated) 90%, transparent);
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(15 23 42 / 0.06),
+      transparent
+    );
+    animation: cd-shimmer 1.6s var(--ease-in-out) infinite;
+  }
+}
+
+@keyframes cd-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Urbanist display face for hero headings and console titles. */
+@utility font-heading {
+  font-family: var(--font-heading-family);
+  letter-spacing: -0.02em;
+  font-synthesis-weight: none;
+}
+
+/* Soft pastel surface used by the modern card layouts. */
+@utility card-soft {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: 0 12px 34px -26px rgb(15 23 42 / 0.55);
+}
+
+
+@utility gradient-ring {
+  background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+}
+
+@utility num {
+  font-family: var(--font-mono-family);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+@utility breathe {
+  animation: cd-breathe 1.8s var(--ease-out) infinite alternate;
+}
+
+@keyframes cd-breathe {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent-start) 0%, transparent);
+  }
+  to {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@utility float-soft {
+  animation: cd-float 4s ease-in-out infinite alternate;
+}
+
+@keyframes cd-float {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathe,
+  .float-soft {
+    animation: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer::after {
+    animation: none !important;
+  }
+}
+
+/* ---------- Night mode ---------- */
+.dark {
+  --background: #0b1020;
+  --foreground: #f4f7fc;
+  --panel: #151d30;
+  --brand: #a5b4fc;
+  --brand-foreground: #ffffff;
+  --warm: #fbbf24;
+
+  --card: #151d30;
+  --card-foreground: #f4f7fc;
+  --popover: #151d30;
+  --popover-foreground: #f4f7fc;
+  --primary: #a5b4fc;
+  --primary-foreground: #0b1020;
+  --secondary: #202a40;
+  --secondary-foreground: #f4f7fc;
+  --muted: #202a40;
+  --muted-foreground: #aab6cc;
+  --accent: #1e213a;
+  --accent-foreground: #c7d2fe;
+  --destructive: #fb7185;
+  --destructive-foreground: #0b0d12;
+  --border: #2a354b;
+  --input: rgb(255 255 255 / 0.12);
+  --ring: rgb(99 102 241 / 0.45);
+
+  --bg-base: #151d30;
+  --bg-elevated: #202a40;
+  --border-subtle: #2a354b;
+  --accent-start: #a5b4fc;
+  --accent-end: #a5b4fc;
+  --accent-ai: #f472b6;
+  --text-primary: #f4f7fc;
+  --text-muted: #aab6cc;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 12px 32px -18px rgb(0 0 0 / 0.8);
+  --shadow-hover: 0 2px 8px rgb(0 0 0 / 0.55), 0 20px 40px -20px rgb(0 0 0 / 0.9);
+  --shadow-glow: 0 0 0 6px rgb(99 102 241 / 0.22);
+}
+
+.dark .app-backdrop {
+  background-image: none;
+}
+
+button, a, input, select, textarea { outline-offset: 3px; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--brand) 55%, transparent);
+}
+button { min-height: 44px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+.dark .shimmer::after {
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.07), transparent);
 }
