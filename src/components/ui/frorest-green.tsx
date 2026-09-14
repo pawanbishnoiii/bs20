@@ -456,24 +456,24 @@ export function ShaderBackground({ className }: { className?: string }) {
       mouseY += (targetY - mouseY) * follow;
       cursorPresence += (targetPresence - cursorPresence) * follow;
       resizeCanvas();
-      const width = canvas.width;
-      const height = canvas.height;
-      gl.uniform4f(
+      const width = canvas!.width;
+      const height = canvas!.height;
+      gl!.uniform4f(
         uni.scene,
         width,
         height,
         ((now - start) / 1000) * UNIFORMS.timeScale,
         UNIFORMS.colorCount,
       );
-      gl.uniform4f(uni.space, UNIFORMS.offsetX, UNIFORMS.offsetY, mouseX, mouseY);
-      gl.uniform4f(
+      gl!.uniform4f(uni.space, UNIFORMS.offsetX, UNIFORMS.offsetY, mouseX, mouseY);
+      gl!.uniform4f(
         uni.cursor,
         UNIFORMS.cursorEnabled ? cursorPresence : 0,
         UNIFORMS.cursorEffect,
         UNIFORMS.cursorStrength,
         UNIFORMS.cursorRadius,
       );
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl!.drawArrays(gl!.TRIANGLES, 0, 3);
       const pointerSettling =
         Math.abs(targetX - mouseX) > 0.001 ||
         Math.abs(targetY - mouseY) > 0.001 ||
