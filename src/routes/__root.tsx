@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/lib/theme";
+import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 import { DynamicBranding } from "@/components/DynamicBranding";
 import { LottiePlayer } from "@/components/ui/lottie-player";
 import error404 from "@/assets/error-404.json.asset.json";
@@ -139,6 +140,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useSmoothScroll();
 
   return (
     <QueryClientProvider client={queryClient}>
