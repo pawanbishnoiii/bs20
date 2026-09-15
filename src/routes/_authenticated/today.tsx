@@ -178,7 +178,9 @@ function TodayPage() {
   const monthly = useMemo(() => monthlyHistory(all, weeklyGoal), [all, weeklyGoal]);
   const perDay = useMemo(() => dailyMinutes(all), [all]);
   const ctaRef = useIdleGlow<HTMLButtonElement>();
-  const streakAlive = !xp.data?.last_streak_at || Date.now() - new Date(xp.data.last_streak_at).getTime() <= 48 * 60 * 60 * 1000;
+  const streakAlive =
+    !xp.data?.last_streak_at ||
+    Date.now() - new Date(xp.data.last_streak_at).getTime() <= 48 * 60 * 60 * 1000;
   const streak = streakAlive ? (xp.data?.streak ?? 0) : 0;
   const heroMood = mascotState({ goalHit: todayMin >= dailyGoal * 60, streak });
 
@@ -327,9 +329,9 @@ function TodayPage() {
         />
       ) : null}
 
-      <div className="app-page space-y-6">
+      <div className="app-page today-dashboard space-y-4 sm:space-y-6">
         {/* Focus card — pastel panel with goal, progress and one clear action */}
-        <section className="surface-card overflow-hidden bg-[var(--lavender-soft)] p-6 sm:p-8">
+        <section className="surface-card today-hero overflow-hidden bg-[var(--lavender-soft)] p-5 sm:p-7 lg:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
             <div className="min-w-0 flex-1">
               <p className="section-label">Today</p>
@@ -347,7 +349,9 @@ function TodayPage() {
                   {streak === 1 ? "1 day streak" : `${streak} day streak`}
                 </span>
                 <span className="rounded-full bg-panel/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-                  {streak > 0 ? "48-hour streak window active" : "Finish a session to start your streak"}
+                  {streak > 0
+                    ? "48-hour streak window active"
+                    : "Finish a session to start your streak"}
                 </span>
               </div>
 
@@ -369,14 +373,14 @@ function TodayPage() {
                 <Mascot state={heroMood} size={48} className="shrink-0" />
               </div>
             </div>
-            <div className="pointer-events-none mx-auto w-48 shrink-0 select-none sm:w-64 lg:w-72">
+            <div className="today-hero-motion pointer-events-none mx-auto w-36 shrink-0 select-none sm:w-48 lg:w-56">
               <LottiePlayer src={studentAnim.url} className="aspect-square h-full w-full" />
             </div>
           </div>
         </section>
 
         {/* Compact period summaries */}
-        <section className="grid grid-cols-3 gap-3">
+        <section className="today-summary grid grid-cols-3 gap-2 sm:gap-3">
           {[
             { label: "Today", minutes: todayMin, bg: "var(--lavender-soft)" },
             { label: "This week", minutes: weekMin, bg: "var(--blue-soft)" },
@@ -384,10 +388,10 @@ function TodayPage() {
           ].map((s) => (
             <div
               key={s.label}
-              className="surface-card p-4 sm:p-5"
+              className="surface-card min-w-0 p-3 sm:p-5"
               style={{ background: s.bg }}
             >
-              <p className="text-xl leading-none font-extrabold tabular-nums">
+              <p className="truncate text-base leading-none font-extrabold tabular-nums sm:text-xl">
                 <CountUp value={Math.floor(s.minutes / 60)} decimals={0} suffix="h" />
                 <span className="ml-1 text-xs opacity-70">
                   {String(Math.round(s.minutes % 60)).padStart(2, "0")}m
@@ -401,13 +405,15 @@ function TodayPage() {
         {/* Compulsory reading — daily newspaper + monthly magazine */}
         <ReadingHabitCard />
 
-        <DailyPlanCard sessions={all} onStart={(item) => navigate({ to: "/study", search: { plan: item.id } })} />
+        <DailyPlanCard
+          sessions={all}
+          onStart={(item) => navigate({ to: "/study", search: { plan: item.id } })}
+        />
 
         <AnimationShowcase />
 
-
         {/* Analytics calendar */}
-        <Reveal className="glass-panel overflow-hidden p-5">
+        <Reveal className="glass-panel today-analytics overflow-hidden p-4 sm:p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Icon3D name="calendar" size={32} />
@@ -430,7 +436,9 @@ function TodayPage() {
             </div>
           </div>
 
-          <div className="mt-4 grid place-items-center overflow-hidden rounded-2xl bg-[var(--lavender-soft)]"><LottiePlayer src={analyticsAnim.url} className="h-40 w-full max-w-md" /></div>
+          <div className="today-analytics-motion mt-4 grid h-24 place-items-center overflow-hidden rounded-2xl bg-[var(--lavender-soft)] sm:h-28">
+            <LottiePlayer src={analyticsAnim.url} className="h-28 w-full max-w-xs sm:h-32" />
+          </div>
 
           <p className="num mt-4 text-3xl font-semibold">
             {fmtHM(scope === "day" ? todayMin : scope === "week" ? weekMin : monthMin)}
@@ -475,7 +483,23 @@ function TodayPage() {
                         }}
                       />
                     </span>
-                    <div className="grid grid-cols-4 gap-2 text-center text-[11px]"><span><b className="block text-sm">{s.topicsDone}/{s.topicsTotal}</b>topics</span><span><b className="block text-sm">{s.attempted}</b>attempted</span><span><b className="block text-sm text-[var(--success)]">{s.correct}</b>correct</span><span><b className="block text-sm text-destructive">{s.incorrect}</b>incorrect</span></div>
+                    <div className="grid grid-cols-4 gap-2 text-center text-[11px]">
+                      <span>
+                        <b className="block text-sm">
+                          {s.topicsDone}/{s.topicsTotal}
+                        </b>
+                        topics
+                      </span>
+                      <span>
+                        <b className="block text-sm">{s.attempted}</b>attempted
+                      </span>
+                      <span>
+                        <b className="block text-sm text-[var(--success)]">{s.correct}</b>correct
+                      </span>
+                      <span>
+                        <b className="block text-sm text-destructive">{s.incorrect}</b>incorrect
+                      </span>
+                    </div>
                     <p className="text-xs font-bold">Average accuracy {s.accuracy}%</p>
                   </li>
                 ))}

@@ -1,6 +1,8 @@
 /* Conflict-safe visual layer. Route files that frequently change in Lovable
    stay untouched; the authenticated layout scopes each page presentation. */
-:root { --edu-shadow: var(--shadow-card); }
+:root {
+  --edu-shadow: var(--shadow-card);
+}
 
 [data-page="today"] > div > div.space-y-6,
 [data-page="history"] > div {
@@ -10,16 +12,67 @@
 }
 
 /* Route-safe presentation only; page structure lives with each component. */
-[data-page="today"] .glass-panel { box-shadow: var(--edu-shadow); }
+[data-page="today"] .glass-panel {
+  box-shadow: var(--edu-shadow);
+}
 [data-page="today"] h2 {
   font-weight: 800;
   letter-spacing: -0.025em;
 }
 
-.route-experience .btn-pop { background: var(--foreground); color: var(--background); }
+/* Today is intentionally dense: motion supports the information hierarchy
+   instead of competing with it, and the dashboard becomes a bento grid once
+   there is enough horizontal space. */
+[data-page="today"] .today-hero-motion,
+[data-page="today"] .today-analytics-motion,
+[data-page="today"] .daily-motion-card {
+  contain: layout paint;
+}
+[data-page="today"] .surface-card,
+.route-experience .glass-panel {
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-page="today"] .surface-card:hover,
+  .route-experience .glass-panel:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--accent-active) 18%, var(--border));
+    box-shadow: var(--shadow-hover);
+  }
+}
+
+/* Shared route safeguards: prevent charts, long labels and form controls from
+   widening the viewport on small phones. */
+.route-experience,
+.route-experience > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.route-experience svg,
+.route-experience img,
+.route-experience canvas {
+  max-width: 100%;
+}
+.route-experience button,
+.route-experience a,
+.route-experience input,
+.route-experience select,
+.route-experience textarea {
+  touch-action: manipulation;
+}
+
+.route-experience .btn-pop {
+  background: var(--foreground);
+  color: var(--background);
+}
 
 /* Study: guided app-like sheet without changing session logic. */
-[data-page="study"] > div { width: 100%; }
+[data-page="study"] > div {
+  width: 100%;
+}
 [data-page="study"] button[aria-pressed] {
   min-height: 48px;
   border-radius: 18px;
@@ -130,9 +183,49 @@
   }
 }
 
+@media (min-width: 1100px) {
+  [data-page="today"] .today-dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+    gap: 24px;
+    align-items: start;
+  }
+  [data-page="today"] .today-dashboard > * {
+    margin: 0;
+  }
+  [data-page="today"] .today-hero,
+  [data-page="today"] .today-summary,
+  [data-page="today"] .today-analytics {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 380px) {
+  [data-page="today"] .today-summary {
+    grid-template-columns: 1fr;
+  }
+  [data-page="today"] .today-summary > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  [data-page="today"] .today-summary p {
+    margin-top: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   [data-page="history"] li.glass-panel,
   [data-page="study"] button {
     transition: none !important;
+  }
+  .route-experience *,
+  .route-experience *::before,
+  .route-experience *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
