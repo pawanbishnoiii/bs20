@@ -32,6 +32,7 @@ import { LottiePlayer } from "@/components/ui/lottie-player";
 import { StreakFlame } from "@/components/StreakFlame";
 import { ReadingHabitCard } from "@/components/ReadingHabitCard";
 import { DailyPlanCard } from "@/components/DailyPlanCard";
+import { AnimationShowcase } from "@/components/AnimationShowcase";
 import { fetchAttempts, subjectPerformance } from "@/lib/plan";
 
 import {
@@ -399,6 +400,8 @@ function TodayPage() {
         <ReadingHabitCard />
 
         <DailyPlanCard sessions={all} onStart={(item) => navigate({ to: "/study", search: { plan: item.id } })} />
+
+        <AnimationShowcase />
 
 
         {/* Analytics calendar */}

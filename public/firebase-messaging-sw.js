@@ -19,10 +19,10 @@ self.addEventListener("fetch", (event) => {
   }).catch(() => caches.match(event.request).then((cached) => cached || caches.match("/"))));
 });
 
-firebase.initializeApp(Object.fromEntries(new URL(self.location).searchParams));
-const messaging = firebase.messaging();
+const firebaseConfig = Object.fromEntries(new URL(self.location).searchParams);
+const messaging = firebaseConfig.apiKey ? (firebase.initializeApp(firebaseConfig), firebase.messaging()) : null;
 
-messaging.onBackgroundMessage((payload) => {
+messaging?.onBackgroundMessage((payload) => {
   const title = payload.notification?.title || "Chronodeck";
   self.registration.showNotification(title, {
     body: payload.notification?.body || "",

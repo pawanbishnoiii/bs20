@@ -155,10 +155,11 @@ function TimerPage() {
     onSuccess: async () => {
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["running"] }),
-        qc.invalidateQueries({ queryKey: ["sessions", "8w"] }),
+        qc.refetchQueries({ queryKey: ["sessions", "8w"], type: "all" }),
         qc.invalidateQueries({ queryKey: ["targets"] }),
-        qc.invalidateQueries({ queryKey: ["plan"] }),
+        qc.refetchQueries({ queryKey: ["plan"], type: "all" }),
         qc.invalidateQueries({ queryKey: ["chapter-state"] }),
+        qc.invalidateQueries({ queryKey: ["chapter-pace"] }),
         qc.invalidateQueries({ queryKey: ["attempts"] }),
         qc.invalidateQueries({ queryKey: ["open-break"] }),
         qc.invalidateQueries({ queryKey: ["breaks"] }),

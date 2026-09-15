@@ -52,7 +52,7 @@ export const Route = createFileRoute("/_authenticated/study")({
 function StudySetupPage() {
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const search = useSearch({ from: "/_authenticated/study" }) as { block?: string; plan?: string };
+  const search = useSearch({ from: "/_authenticated/study" }) as { block?: string; plan?: string; date?: string };
   const [form, setForm] = useState({
     subject_id: "",
     subject_name: "",
@@ -71,7 +71,8 @@ function StudySetupPage() {
     queryKey: ["sessions", "study-recent"],
     queryFn: () => fetchSessions(new Date(startOfToday().getTime() - 13 * 864e5).toISOString()),
   });
-  const plan = useQuery({ queryKey: ["plan", localDateKey()], queryFn: () => fetchPlan() });
+  const activePlanDate = search.date ?? localDateKey();
+  const plan = useQuery({ queryKey: ["plan", activePlanDate], queryFn: () => fetchPlan(activePlanDate) });
   const subjectTargets = useQuery({ queryKey: ["subject-targets"], queryFn: fetchSubjectTargets });
   const pace = useQuery({ queryKey: ["chapter-pace"], queryFn: fetchChapterPace });
   const activeSubject = (subjects.data ?? []).find((s) => s.id === form.subject_id);

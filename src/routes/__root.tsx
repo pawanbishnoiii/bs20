@@ -13,7 +13,7 @@ import { ThemeProvider } from "@/lib/theme";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 import { DynamicBranding } from "@/components/DynamicBranding";
 import { LottiePlayer } from "@/components/ui/lottie-player";
-import error404 from "@/assets/error-404.json.asset.json";
+import error404 from "@/assets/error-404-upload.json.asset.json";
 
 import appCss from "../styles.css?url";
 import experienceCss from "../experience.css?url";
@@ -145,6 +145,10 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useSmoothScroll();
+  useEffect(() => {
+    if ("serviceWorker" in navigator)
+      void navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" }).catch(() => {});
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
