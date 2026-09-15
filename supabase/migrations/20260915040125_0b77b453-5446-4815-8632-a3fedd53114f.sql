@@ -1,0 +1,12 @@
+ALTER FUNCTION public.admin_notification_history(integer) SECURITY INVOKER;
+ALTER FUNCTION public.admin_overview() SECURITY INVOKER;
+ALTER FUNCTION public.admin_push_stats() SECURITY INVOKER;
+ALTER FUNCTION public.admin_push_subscribers(integer) SECURITY INVOKER;
+ALTER FUNCTION public.admin_set_role(uuid, public.app_role) SECURITY INVOKER;
+ALTER FUNCTION public.admin_users(integer) SECURITY INVOKER;
+ALTER FUNCTION public.auto_schedule_targets() SECURITY INVOKER;
+ALTER FUNCTION public.has_role(uuid, public.app_role) SECURITY INVOKER;
+ALTER FUNCTION public.log_reading(text, integer) SECURITY INVOKER;
+ALTER FUNCTION public.touch_last_seen() SECURITY INVOKER;
+ALTER FUNCTION public.undo_reading(text) SECURITY INVOKER;
+ALTER FUNCTION public.user_local_date(uuid) SECURITY INVOKER;
