@@ -13,27 +13,6 @@ type SignInOptions = {
 export const lovable = {
   auth: {
     signInWithOAuth: async (provider: OAuthProvider, opts?: SignInOptions) => {
-      // Lovable's `~oauth` proxy only exists on Lovable preview/production hosts.
-      // External deployments (for example Vercel) must start OAuth through the
-      // project's Supabase endpoint or the browser is sent to a local 404 route.
-      const host = typeof window === "undefined" ? "" : window.location.hostname;
-      const usesLovableProxy =
-        host.endsWith(".lovable.app") ||
-        host.endsWith(".lovableproject.com") ||
-        host.endsWith(".lovableproject-dev.com");
-
-      if (!usesLovableProxy) {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          provider: provider as Parameters<typeof supabase.auth.signInWithOAuth>[0]["provider"],
-          options: {
-            redirectTo: opts?.redirect_uri ?? window.location.origin,
-            ...(opts?.extraParams ? { queryParams: opts.extraParams } : {}),
-          },
-        });
-
-        return { redirected: Boolean(data.url), error, url: data.url };
-      }
-
       const result = await lovableAuth.signInWithOAuth(provider, {
         ...opts,
         extraParams: {

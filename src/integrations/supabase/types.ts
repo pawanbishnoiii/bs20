@@ -446,12 +446,17 @@ export type Database = {
           completed_session_id: string | null
           created_at: string
           id: string
+          next_review_at: string | null
           pinned: boolean
           plan_date: string
           priority: number
+          review_stage: number | null
+          scheduled_end: string | null
+          scheduled_start: string | null
           session_kind: string
           source: string
           subject_id: string | null
+          subject_name: string | null
           subtopic_id: string | null
           target_minutes: number
           updated_at: string
@@ -464,12 +469,17 @@ export type Database = {
           completed_session_id?: string | null
           created_at?: string
           id?: string
+          next_review_at?: string | null
           pinned?: boolean
           plan_date: string
           priority?: number
+          review_stage?: number | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
           session_kind?: string
           source?: string
           subject_id?: string | null
+          subject_name?: string | null
           subtopic_id?: string | null
           target_minutes: number
           updated_at?: string
@@ -482,12 +492,17 @@ export type Database = {
           completed_session_id?: string | null
           created_at?: string
           id?: string
+          next_review_at?: string | null
           pinned?: boolean
           plan_date?: string
           priority?: number
+          review_stage?: number | null
+          scheduled_end?: string | null
+          scheduled_start?: string | null
           session_kind?: string
           source?: string
           subject_id?: string | null
+          subject_name?: string | null
           subtopic_id?: string | null
           target_minutes?: number
           updated_at?: string
@@ -1452,6 +1467,84 @@ export type Database = {
         }
         Relationships: []
       }
+      subject_targets: {
+        Row: {
+          auto_created: boolean
+          created_at: string
+          daily_chapters: number
+          daily_minutes: number
+          daily_questions: number
+          daily_topics: number
+          id: string
+          monthly_chapters: number
+          monthly_minutes: number
+          monthly_questions: number
+          monthly_topics: number
+          subject_id: string
+          updated_at: string
+          user_id: string
+          weekly_chapters: number
+          weekly_minutes: number
+          weekly_questions: number
+          weekly_topics: number
+        }
+        Insert: {
+          auto_created?: boolean
+          created_at?: string
+          daily_chapters?: number
+          daily_minutes?: number
+          daily_questions?: number
+          daily_topics?: number
+          id?: string
+          monthly_chapters?: number
+          monthly_minutes?: number
+          monthly_questions?: number
+          monthly_topics?: number
+          subject_id: string
+          updated_at?: string
+          user_id: string
+          weekly_chapters?: number
+          weekly_minutes?: number
+          weekly_questions?: number
+          weekly_topics?: number
+        }
+        Update: {
+          auto_created?: boolean
+          created_at?: string
+          daily_chapters?: number
+          daily_minutes?: number
+          daily_questions?: number
+          daily_topics?: number
+          id?: string
+          monthly_chapters?: number
+          monthly_minutes?: number
+          monthly_questions?: number
+          monthly_topics?: number
+          subject_id?: string
+          updated_at?: string
+          user_id?: string
+          weekly_chapters?: number
+          weekly_minutes?: number
+          weekly_questions?: number
+          weekly_topics?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subject_targets_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subject_targets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subjects: {
         Row: {
           chapters: Json
@@ -1829,6 +1922,7 @@ export type Database = {
         Returns: number
       }
       close_stale_sessions: { Args: never; Returns: number }
+      ensure_my_subject_targets: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1858,6 +1952,10 @@ export type Database = {
       refresh_all_daily_study_plans: { Args: never; Returns: number }
       refresh_my_study_plan: { Args: { p_plan_date?: string }; Returns: number }
       review_interval_days: { Args: { _stage: number }; Returns: number }
+      schedule_my_daily_plan: {
+        Args: { p_plan_date?: string }
+        Returns: number
+      }
       touch_last_seen: { Args: never; Returns: undefined }
       undo_reading: { Args: { _kind: string }; Returns: undefined }
       user_local_date: { Args: { _user_id: string }; Returns: string }

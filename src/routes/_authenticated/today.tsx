@@ -33,6 +33,7 @@ import { ReadingHabitCard } from "@/components/ReadingHabitCard";
 import { DailyPlanCard } from "@/components/DailyPlanCard";
 import { fetchAttempts, subjectPerformance } from "@/lib/plan";
 import heroVideo from "@/assets/hero.mp4.asset.json";
+import showcaseVideo from "@/assets/showcase.mp4.asset.json";
 
 import {
   DAYS,
@@ -179,10 +180,6 @@ function TodayPage() {
   const streak = useMemo(() => dailyHitStreak(all, dailyGoal), [all, dailyGoal]);
   const heroMood = mascotState({ goalHit: todayMin >= dailyGoal * 60, streak });
 
-  const todayIdx = new Date().getDay();
-  const tomorrowIdx = (todayIdx + 1) % 7;
-  const todayBlocks = (blocks.data ?? []).filter((b) => b.day_of_week === todayIdx);
-  const tomorrowBlocks = (blocks.data ?? []).filter((b) => b.day_of_week === tomorrowIdx);
   const activeTargets = (targets.data ?? []).filter((t) => t.is_active);
 
   const quote = useMemo(() => {
@@ -370,8 +367,9 @@ function TodayPage() {
                 <Mascot state={heroMood} size={48} className="shrink-0" />
               </div>
             </div>
-            <div className="pointer-events-none mx-auto w-40 shrink-0 select-none sm:w-56 lg:w-64">
-              <LottiePlayer src={studentAnim.url} className="h-full w-full" />
+            <div className="pointer-events-none mx-auto w-48 shrink-0 select-none sm:w-64 lg:w-72">
+              <video src={heroVideo.url} autoPlay muted loop playsInline aria-label="Animated student study scene" className="aspect-square w-full rounded-[28px] object-cover motion-reduce:hidden" />
+              <div className="hidden motion-reduce:block"><LottiePlayer src={studentAnim.url} className="h-full w-full" /></div>
             </div>
           </div>
         </section>
@@ -402,24 +400,11 @@ function TodayPage() {
         {/* Compulsory reading — daily newspaper + monthly magazine */}
         <ReadingHabitCard />
 
-        {/* Today and next day plan */}
-        <section className="surface-card p-5 sm:p-6">
-          <div className="flex items-center gap-3">
-            <Icon3D name="books" size={32} />
-            <h2 className="text-xl font-bold tracking-tight">Your plan</h2>
-            <Link to="/timetable" className="ml-auto text-sm font-semibold text-brand">
-              Timetable
-            </Link>
-          </div>
-          <p className="section-label mt-4">Today · {DAYS[todayIdx]}</p>
-          <BlockList items={todayBlocks} empty="No blocks scheduled for today." />
-          <p className="section-label mt-5">Tomorrow · {DAYS[tomorrowIdx]}</p>
-          <BlockList items={tomorrowBlocks} empty="Tomorrow is open — plan a reading block." />
-        </section>
+        <DailyPlanCard sessions={all} onStart={(item) => navigate({ to: "/study", search: { plan: item.id } })} />
 
 
         {/* Analytics calendar */}
-        <Reveal className="glass-panel p-5">
+        <Reveal className="glass-panel overflow-hidden p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Icon3D name="calendar" size={32} />
@@ -442,6 +427,8 @@ function TodayPage() {
             </div>
           </div>
 
+          <video src={showcaseVideo.url} autoPlay muted loop playsInline aria-label="Animated study analytics" className="mt-4 aspect-[16/6] w-full rounded-2xl object-cover motion-reduce:hidden" />
+
           <p className="num mt-4 text-3xl font-semibold">
             {fmtHM(scope === "day" ? todayMin : scope === "week" ? weekMin : monthMin)}
           </p>
@@ -462,30 +449,31 @@ function TodayPage() {
           {/* Subject-wise performance against each subject's target */}
           <div className="mt-6">
             <p className="section-label">Subject performance · {subjWindow.label}</p>
-            {progress.length === 0 ? (
+            {perf.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">
                 Add subjects to see how each one is performing.
               </p>
             ) : (
               <ul className="mt-3 space-y-3">
-                {progress.slice(0, 8).map((s) => (
-                  <li key={`${s.id ?? s.name}`} className="grid gap-1.5">
+                {perf.slice(0, 8).map((s) => (
+                  <li key={s.id} className="grid gap-2 rounded-2xl bg-secondary/60 p-3">
                     <div className="flex items-baseline justify-between gap-3">
                       <span className="truncate text-sm font-semibold">{s.name}</span>
                       <span className="shrink-0 text-xs font-semibold tabular-nums text-muted-foreground">
-                        {fmtHM(s.minutes)}
-                        {s.targetHours > 0 ? ` / ${fmtHM(Math.round(s.targetHours * 60))}` : ""}
+                        {fmtHM(s.minutes)} / {fmtHM(s.targetMinutes)}
                       </span>
                     </div>
                     <span className="h-2.5 overflow-hidden rounded-full bg-muted">
                       <span
                         className="block h-full rounded-full transition-[width] duration-700 ease-out"
                         style={{
-                          width: `${Math.min(100, s.targetHours > 0 ? s.pct : s.minutes > 0 ? 100 : 0)}%`,
+                          width: `${s.pct}%`,
                           background: s.color,
                         }}
                       />
                     </span>
+                    <div className="grid grid-cols-4 gap-2 text-center text-[11px]"><span><b className="block text-sm">{s.topicsDone}/{s.topicsTotal}</b>topics</span><span><b className="block text-sm">{s.attempted}</b>attempted</span><span><b className="block text-sm text-[var(--success)]">{s.correct}</b>correct</span><span><b className="block text-sm text-destructive">{s.incorrect}</b>incorrect</span></div>
+                    <p className="text-xs font-bold">Average accuracy {s.accuracy}%</p>
                   </li>
                 ))}
               </ul>

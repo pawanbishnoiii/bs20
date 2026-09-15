@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { CalendarDays, Check, Loader2, RefreshCw } from "lucide-react";
+import { CalendarDays, Check, Loader2, Play, RefreshCw } from "lucide-react";
 import {
   fetchPlan,
   generatePlan,
@@ -11,9 +11,11 @@ import {
   planItemStatus,
   setPlanItemDone,
   type PlanStatus,
+  type PlanItem,
 } from "@/lib/plan";
 import { fmtHM, startOfToday, type Session } from "@/lib/study";
 import { ActivityArtwork } from "@/components/study-ui";
+import loadingVideo from "@/assets/loading.mp4.asset.json";
 
 const STATUS_STYLE: Record<PlanStatus, { label: string; cls: string }> = {
   complete: { label: "Complete", cls: "bg-[var(--mint-soft)] text-emerald-800" },
@@ -34,7 +36,7 @@ const KIND_ART: Record<string, "reading" | "class" | "revision" | "practice"> = 
  * Today's automatic study plan. If the syllabus produced no plan for today yet,
  * one is generated from subjects, chapters and due revisions on first view.
  */
-export function DailyPlanCard({ sessions }: { sessions: Session[] }) {
+export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sessions: Session[]; title?: string; onStart?: (item: PlanItem) => void }) {
   const qc = useQueryClient();
   const planDate = localDateKey();
   const since = useMemo(() => startOfToday(), []);
@@ -78,7 +80,7 @@ export function DailyPlanCard({ sessions }: { sessions: Session[] }) {
           <CalendarDays className="size-5" aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <h2 className="text-xl font-bold tracking-tight">Your plan</h2>
+          <h2 className="text-xl font-bold tracking-tight">{title}</h2>
           <p className="text-xs font-semibold text-muted-foreground">
             {new Date().toLocaleDateString(undefined, {
               weekday: "long",
@@ -108,11 +110,9 @@ export function DailyPlanCard({ sessions }: { sessions: Session[] }) {
       </div>
 
       {plan.isLoading ? (
-        <p className="mt-5 text-sm text-muted-foreground">Building today's plan…</p>
+        <div className="mt-5 flex items-center gap-4 rounded-2xl bg-secondary p-3"><video src={loadingVideo.url} autoPlay muted loop playsInline aria-hidden="true" className="size-20 rounded-xl object-cover motion-reduce:hidden" /><p className="text-sm font-semibold text-muted-foreground">Building today's syllabus plan…</p></div>
       ) : rows.length === 0 ? (
-        <p className="mt-5 text-sm text-muted-foreground">
-          No plan yet. Add subjects with chapters and press Regenerate.
-        </p>
+        <div className="mt-5 flex items-center gap-4 rounded-2xl bg-secondary p-3"><video src={loadingVideo.url} autoPlay muted loop playsInline aria-hidden="true" className="size-20 rounded-xl object-cover motion-reduce:hidden" /><p className="text-sm text-muted-foreground">No plan yet. Add subjects with chapters and press Regenerate.</p></div>
       ) : (
         <ul className="mt-5 space-y-3">
           {rows.map(({ item, minutes, status }) => {
@@ -131,10 +131,10 @@ export function DailyPlanCard({ sessions }: { sessions: Session[] }) {
                 />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold">
-                    {item.chapter_name ?? "Focus block"}
+                    {item.chapter_name ?? item.subject_name ?? "Focus block"}
                   </p>
                   <p className="mt-0.5 text-xs font-semibold text-muted-foreground capitalize">
-                    {item.session_kind} · {fmtHM(item.target_minutes)} target
+                    {item.subject_name ? `${item.subject_name} · ` : ""}{item.session_kind} · {fmtHM(item.target_minutes)} target
                     {minutes > 0 ? ` · ${fmtHM(minutes)} done` : ""}
                   </p>
                   <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-muted">
@@ -149,6 +149,7 @@ export function DailyPlanCard({ sessions }: { sessions: Session[] }) {
                 >
                   {style.label}
                 </span>
+                {onStart && status !== "complete" ? <button type="button" onClick={() => onStart(item)} aria-label={`Start ${item.chapter_name ?? item.subject_name ?? "plan item"}`} className="grid size-9 shrink-0 place-items-center rounded-full bg-foreground text-background"><Play className="size-4" aria-hidden="true" /></button> : null}
                 <button
                   onClick={() =>
                     toggle.mutate({ id: item.id, done: !item.completed_at })
