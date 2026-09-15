@@ -91,6 +91,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Focus timer, weekly timetable, targets and an AI coach that reads your real study data.",
       },
       { name: "author", content: "Chronodeck" },
+      { name: "theme-color", content: "#17171b" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { property: "og:title", content: "Chronodeck — AI Study OS" },
       {
         property: "og:description",
@@ -115,6 +118,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/favicon.png" },
+      { rel: "manifest", href: "/manifest.json" },
     ],
     scripts: [{ src: "https://accounts.google.com/gsi/client", async: true, defer: true }],
   }),

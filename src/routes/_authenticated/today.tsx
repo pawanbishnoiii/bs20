@@ -26,14 +26,13 @@ import {
 import { Mascot, mascotState } from "@/components/Mascot";
 import { dailyHitStreak } from "@/lib/streak";
 import { Icon3D } from "@/components/Icon3D";
-import studentAnim from "@/assets/student.json.asset.json";
+import studentAnim from "@/assets/student-upload.json.asset.json";
+import analyticsAnim from "@/assets/super-woman-upload.json.asset.json";
 import { LottiePlayer } from "@/components/ui/lottie-player";
 import { StreakFlame } from "@/components/StreakFlame";
 import { ReadingHabitCard } from "@/components/ReadingHabitCard";
 import { DailyPlanCard } from "@/components/DailyPlanCard";
 import { fetchAttempts, subjectPerformance } from "@/lib/plan";
-import heroVideo from "@/assets/hero.mp4.asset.json";
-import showcaseVideo from "@/assets/showcase.mp4.asset.json";
 
 import {
   DAYS,
@@ -368,8 +367,7 @@ function TodayPage() {
               </div>
             </div>
             <div className="pointer-events-none mx-auto w-48 shrink-0 select-none sm:w-64 lg:w-72">
-              <video src={heroVideo.url} autoPlay muted loop playsInline aria-label="Animated student study scene" className="aspect-square w-full rounded-[28px] object-cover motion-reduce:hidden" />
-              <div className="hidden motion-reduce:block"><LottiePlayer src={studentAnim.url} className="h-full w-full" /></div>
+              <LottiePlayer src={studentAnim.url} className="aspect-square h-full w-full" />
             </div>
           </div>
         </section>
@@ -427,7 +425,7 @@ function TodayPage() {
             </div>
           </div>
 
-          <video src={showcaseVideo.url} autoPlay muted loop playsInline aria-label="Animated study analytics" className="mt-4 aspect-[16/6] w-full rounded-2xl object-cover motion-reduce:hidden" />
+          <div className="mt-4 grid place-items-center overflow-hidden rounded-2xl bg-[var(--lavender-soft)]"><LottiePlayer src={analyticsAnim.url} className="h-40 w-full max-w-md" /></div>
 
           <p className="num mt-4 text-3xl font-semibold">
             {fmtHM(scope === "day" ? todayMin : scope === "week" ? weekMin : monthMin)}

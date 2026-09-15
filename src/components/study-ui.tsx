@@ -2,10 +2,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import artReading from "@/assets/activity-reading.png";
-import artRevision from "@/assets/activity-revision.png";
-import artClass from "@/assets/activity-class.png";
-import artPractice from "@/assets/activity-practice.png";
+import artReading from "@/assets/activity-reading-new.png";
+import artRevision from "@/assets/activity-revision-new.png";
+import artClass from "@/assets/activity-class-new.png";
+import artPractice from "@/assets/activity-practice-new.png";
 import { Button } from "@/components/ui/button";
 
 export type ActivityKind = "reading" | "revision" | "class" | "practice";

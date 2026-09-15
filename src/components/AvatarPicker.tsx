@@ -41,24 +41,6 @@ export function AvatarPicker({
     toast.success("Profile photo updated");
   }
 
-  /** Uploads through a signed URL so we can report real byte progress. */
-  function putWithProgress(url: string, file: File) {
-    return new Promise<void>((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open("PUT", url, true);
-      xhr.setRequestHeader("content-type", file.type || "application/octet-stream");
-      xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable) setProgress(Math.round((e.loaded / e.total) * 100));
-      };
-      xhr.onload = () =>
-        xhr.status >= 200 && xhr.status < 300
-          ? resolve()
-          : reject(new Error(`Upload failed (${xhr.status})`));
-      xhr.onerror = () => reject(new Error("Network error while uploading"));
-      xhr.send(file);
-    });
-  }
-
   async function upload(file: File) {
     if (!file.type.startsWith("image/")) {
       toast.error("Sirf image file chuno");
@@ -74,12 +56,14 @@ export function AvatarPicker({
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) throw new Error("Signed out");
       const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-      const path = `avatars/${auth.user.id}-${Date.now()}.${ext}`;
-      const { data: target, error: targetError } = await supabase.storage
-        .from("data")
-        .createSignedUploadUrl(path);
-      if (targetError || !target) throw new Error(targetError?.message ?? "Upload could not start");
-      await putWithProgress(target.signedUrl, file);
+       const path = `avatars/${auth.user.id}/${Date.now()}.${ext}`;
+       setProgress(20);
+       const { error: uploadError } = await supabase.storage.from("data").upload(path, file, {
+         contentType: file.type || "application/octet-stream",
+         upsert: false,
+       });
+       if (uploadError) throw new Error(uploadError.message);
+       setProgress(80);
       const { data: signed, error: signedError } = await supabase.storage
         .from("data")
         .createSignedUrl(path, 60 * 60 * 24 * 3650);

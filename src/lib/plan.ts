@@ -99,16 +99,43 @@ const norm = (v: string | null | undefined) => (v ?? "").trim().toLowerCase();
 export function planItemMinutes(item: PlanItem, sessions: Session[], since: Date) {
   return sessions
     .filter((s) => {
-      if (s.is_running || !s.ended_at) return false;
+      if (!s.is_running && !s.ended_at) return false;
       if (new Date(s.started_at) < since) return false;
       if (item.subject_id && s.subject_id !== item.subject_id) return false;
+      const sessionKind = s.kind === "live" ? "class" : s.kind === "test" ? "practice" : s.kind;
+      const itemKind = item.session_kind === "live" ? "class" : item.session_kind === "test" ? "practice" : item.session_kind;
+      if (sessionKind !== itemKind) return false;
       if (item.chapter_name) {
         const target = norm(item.chapter_name);
         if (norm(s.chapter) !== target && norm(s.topic) !== target) return false;
       }
       return true;
     })
-    .reduce((a, s) => a + (s.duration_minutes ?? 0), 0);
+    .reduce((a, s) => {
+      if (!s.is_running) return a + (s.duration_minutes ?? 0);
+      return a + Math.max(0, Math.floor((Date.now() - new Date(s.started_at).getTime()) / 60_000) - (s.break_minutes ?? 0));
+    }, 0);
+}
+
+export type ChapterPace = {
+  chapters_tracked: number;
+  chapters_completed: number;
+  avg_chapter_minutes: number;
+  avg_reading_minutes: number;
+  avg_revision_minutes: number;
+};
+
+export async function fetchChapterPace(): Promise<ChapterPace> {
+  const { data, error } = await supabase.rpc("chapter_pace");
+  if (error) throw error;
+  const row = data?.[0];
+  return {
+    chapters_tracked: row?.chapters_tracked ?? 0,
+    chapters_completed: row?.chapters_completed ?? 0,
+    avg_chapter_minutes: Number(row?.avg_chapter_minutes ?? 0),
+    avg_reading_minutes: Number(row?.avg_reading_minutes ?? 0),
+    avg_revision_minutes: Number(row?.avg_revision_minutes ?? 0),
+  };
 }
 
 export function planItemStatus(item: PlanItem, minutes: number): PlanStatus {

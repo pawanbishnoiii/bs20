@@ -15,7 +15,8 @@ import {
 } from "@/lib/plan";
 import { fmtHM, startOfToday, type Session } from "@/lib/study";
 import { ActivityArtwork } from "@/components/study-ui";
-import loadingVideo from "@/assets/loading.mp4.asset.json";
+import { RivePlayer } from "@/components/ui/rive-player";
+import loadingRive from "@/assets/loading-snake.riv.asset.json";
 
 const STATUS_STYLE: Record<PlanStatus, { label: string; cls: string }> = {
   complete: { label: "Complete", cls: "bg-[var(--mint-soft)] text-emerald-800" },
@@ -110,9 +111,9 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
       </div>
 
       {plan.isLoading ? (
-        <div className="mt-5 flex items-center gap-4 rounded-2xl bg-secondary p-3"><video src={loadingVideo.url} autoPlay muted loop playsInline aria-hidden="true" className="size-20 rounded-xl object-cover motion-reduce:hidden" /><p className="text-sm font-semibold text-muted-foreground">Building today's syllabus plan…</p></div>
+        <div className="mt-5 flex items-center gap-4 rounded-2xl bg-secondary p-3"><RivePlayer src={loadingRive.url} className="size-20 shrink-0" /><p className="text-sm font-semibold text-muted-foreground">Building today's syllabus plan…</p></div>
       ) : rows.length === 0 ? (
-        <div className="mt-5 flex items-center gap-4 rounded-2xl bg-secondary p-3"><video src={loadingVideo.url} autoPlay muted loop playsInline aria-hidden="true" className="size-20 rounded-xl object-cover motion-reduce:hidden" /><p className="text-sm text-muted-foreground">No plan yet. Add subjects with chapters and press Regenerate.</p></div>
+        <div className="mt-5 flex items-center gap-4 rounded-2xl bg-secondary p-3"><RivePlayer src={loadingRive.url} className="size-20 shrink-0" /><p className="text-sm text-muted-foreground">No plan yet. Add subjects with chapters and press Regenerate.</p></div>
       ) : (
         <ul className="mt-5 space-y-3">
           {rows.map(({ item, minutes, status }) => {

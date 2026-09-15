@@ -20,7 +20,7 @@ import { SubjectsManager } from "@/components/SubjectsManager";
 import { ActivityArtwork, PageHeader, ResponsiveSheet, type ActivityKind } from "@/components/study-ui";
 import { Button } from "@/components/ui/button";
 import { DailyPlanCard } from "@/components/DailyPlanCard";
-import { fetchPlan, fetchSubjectTargets, localDateKey, type PlanItem } from "@/lib/plan";
+import { fetchChapterPace, fetchPlan, fetchSubjectTargets, localDateKey, type PlanItem } from "@/lib/plan";
 import learningPath from "@/assets/chronodeck-learning-path.png";
 
 const SESSION_KINDS = [
@@ -73,6 +73,7 @@ function StudySetupPage() {
   });
   const plan = useQuery({ queryKey: ["plan", localDateKey()], queryFn: () => fetchPlan() });
   const subjectTargets = useQuery({ queryKey: ["subject-targets"], queryFn: fetchSubjectTargets });
+  const pace = useQuery({ queryKey: ["chapter-pace"], queryFn: fetchChapterPace });
   const activeSubject = (subjects.data ?? []).find((s) => s.id === form.subject_id);
 
 
@@ -283,6 +284,16 @@ function StudySetupPage() {
         </div>
 
         <div className="mt-6"><DailyPlanCard sessions={recent.data ?? []} title="Today's plan" onStart={choosePlanItem} /></div>
+
+        <section className="surface-card mt-6 overflow-hidden p-5 sm:p-6">
+          <p className="section-label">Your natural pace</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-4">
+            <div className="rounded-2xl bg-lavender-soft p-4 sm:col-span-2"><p className="text-3xl font-extrabold">{fmtHM(pace.data?.avg_chapter_minutes ?? 0)}</p><p className="mt-1 text-sm font-semibold">average to finish a chapter</p><p className="mt-2 text-xs text-muted-foreground">Reading, revisions, classes and practice together. Your plan duration is a minimum focus target, not a fixed chapter limit.</p></div>
+            <div className="rounded-2xl bg-yellow p-4"><p className="text-2xl font-extrabold">{fmtHM(pace.data?.avg_reading_minutes ?? 0)}</p><p className="mt-1 text-xs font-semibold">average reading sitting</p></div>
+            <div className="rounded-2xl bg-mint p-4"><p className="text-2xl font-extrabold">{fmtHM(pace.data?.avg_revision_minutes ?? 0)}</p><p className="mt-1 text-xs font-semibold">average revision sitting</p></div>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">Based on {pace.data?.chapters_completed ?? 0} completed of {pace.data?.chapters_tracked ?? 0} tracked chapters.</p>
+        </section>
 
         {subjectTargets.data?.length ? <section className="surface-card mt-6 p-5 sm:p-6"><h2 className="text-xl font-bold">Subject targets</h2><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{subjectTargets.data.map((target) => { const subject = (subjects.data ?? []).find((row) => row.id === target.subject_id); return <div key={target.id} className="rounded-2xl bg-secondary p-4"><p className="font-bold">{subject?.name ?? "Subject"}</p><p className="mt-1 text-xs text-muted-foreground">{fmtHM(target.daily_minutes)} daily · {target.weekly_topics} topics/week · {target.weekly_questions} questions/week</p></div>; })}</div></section> : null}
 
