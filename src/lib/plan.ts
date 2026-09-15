@@ -13,6 +13,13 @@ export type PlanItem = {
   source: string;
   pinned: boolean;
   completed_at: string | null;
+  chapter_id: string | null;
+  subtopic_id: string | null;
+  subject_name: string | null;
+  review_stage: number | null;
+  next_review_at: string | null;
+  scheduled_start: string | null;
+  scheduled_end: string | null;
 };
 
 export type PlanStatus = "complete" | "progress" | "pending";
@@ -28,7 +35,7 @@ export async function fetchPlan(planDate = localDateKey()): Promise<PlanItem[]> 
   const { data, error } = await supabase
     .from("daily_study_plan_items")
     .select(
-      "id, plan_date, subject_id, chapter_name, session_kind, target_minutes, priority, source, pinned, completed_at",
+      "id, plan_date, subject_id, chapter_id, subtopic_id, subject_name, chapter_name, session_kind, target_minutes, priority, source, pinned, completed_at, review_stage, next_review_at, scheduled_start, scheduled_end",
     )
     .eq("plan_date", planDate)
     .order("priority", { ascending: true });
@@ -49,6 +56,41 @@ export async function setPlanItemDone(id: string, done: boolean) {
     .update({ completed_at: done ? new Date().toISOString() : null })
     .eq("id", id);
   if (error) throw error;
+}
+
+export async function schedulePlan(planDate = localDateKey()) {
+  const { error } = await supabase.rpc("schedule_my_daily_plan", { p_plan_date: planDate });
+  if (error) throw error;
+  return fetchPlan(planDate);
+}
+
+export type SubjectTarget = {
+  id: string;
+  subject_id: string;
+  daily_minutes: number;
+  weekly_minutes: number;
+  monthly_minutes: number;
+  daily_topics: number;
+  weekly_topics: number;
+  monthly_topics: number;
+  daily_chapters: number;
+  weekly_chapters: number;
+  monthly_chapters: number;
+  daily_questions: number;
+  weekly_questions: number;
+  monthly_questions: number;
+  auto_created: boolean;
+};
+
+export async function fetchSubjectTargets(): Promise<SubjectTarget[]> {
+  const { error: ensureError } = await supabase.rpc("ensure_my_subject_targets");
+  if (ensureError) throw ensureError;
+  const { data, error } = await supabase
+    .from("subject_targets")
+    .select("*")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as SubjectTarget[];
 }
 
 const norm = (v: string | null | undefined) => (v ?? "").trim().toLowerCase();

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 /** table -> query keys to invalidate when a row changes */
 const MAP: Record<string, string[][]> = {
-  study_sessions: [["sessions", "8w"], ["running"], ["targets"], ["admin-overview"]],
+  study_sessions: [["sessions", "8w"], ["sessions", "study-recent"], ["running"], ["targets"], ["plan"], ["chapter-state"], ["attempts"], ["admin-overview"]],
   session_breaks: [["breaks"], ["open-break"]],
 
   notifications: [["notifications"]],
@@ -12,6 +12,10 @@ const MAP: Record<string, string[][]> = {
   user_roles: [["is-admin"], ["admin-users"]],
   subjects: [["subjects"]],
   targets: [["targets"]],
+  subject_targets: [["subject-targets"]],
+  daily_study_plan_items: [["plan"]],
+  chapter_learning_state: [["chapter-state"], ["plan"]],
+  test_attempts: [["attempts"]],
   timetable_blocks: [["blocks"]],
   user_settings: [["settings"]],
   app_settings: [["app-settings"]],
