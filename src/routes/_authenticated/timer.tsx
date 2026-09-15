@@ -157,6 +157,9 @@ function TimerPage() {
         qc.invalidateQueries({ queryKey: ["running"] }),
         qc.invalidateQueries({ queryKey: ["sessions", "8w"] }),
         qc.invalidateQueries({ queryKey: ["targets"] }),
+        qc.invalidateQueries({ queryKey: ["plan"] }),
+        qc.invalidateQueries({ queryKey: ["chapter-state"] }),
+        qc.invalidateQueries({ queryKey: ["attempts"] }),
         qc.invalidateQueries({ queryKey: ["open-break"] }),
         qc.invalidateQueries({ queryKey: ["breaks"] }),
       ]);
