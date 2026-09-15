@@ -180,10 +180,6 @@ function TodayPage() {
   const streak = useMemo(() => dailyHitStreak(all, dailyGoal), [all, dailyGoal]);
   const heroMood = mascotState({ goalHit: todayMin >= dailyGoal * 60, streak });
 
-  const todayIdx = new Date().getDay();
-  const tomorrowIdx = (todayIdx + 1) % 7;
-  const todayBlocks = (blocks.data ?? []).filter((b) => b.day_of_week === todayIdx);
-  const tomorrowBlocks = (blocks.data ?? []).filter((b) => b.day_of_week === tomorrowIdx);
   const activeTargets = (targets.data ?? []).filter((t) => t.is_active);
 
   const quote = useMemo(() => {
