@@ -6,7 +6,7 @@ import { Icon3D } from "@/components/Icon3D";
 import { EmptyState, PageHeader, ResponsiveSheet, SegmentedControl } from "@/components/study-ui";
 import { Button } from "@/components/ui/button";
 import emptyCalendar from "@/assets/chronodeck-empty-calendar.png";
-import { fetchPlan, fetchSubjectTargets, localDateKey, schedulePlan } from "@/lib/plan";
+import { fetchSubjectTargets, localDateKey, schedulePlan } from "@/lib/plan";
 import {
   DAYS,
   createBlock,
@@ -48,6 +48,7 @@ function TimetablePage() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [day, setDay] = useState<number>(new Date().getDay());
+  const [selectedDate, setSelectedDate] = useState(localDateKey());
   const [view, setView] = useState<"list" | "calendar">("list");
   const [open, setOpen] = useState(false);
   const [order, setOrder] = useState<Block[]>([]);
@@ -63,8 +64,7 @@ function TimetablePage() {
 
   const blocks = useQuery({ queryKey: ["blocks"], queryFn: fetchBlocks });
   const subjects = useQuery({ queryKey: ["subjects"], queryFn: fetchSubjects });
-  const planDate = localDateKey();
-  const plan = useQuery({ queryKey: ["plan", planDate], queryFn: () => schedulePlan(planDate) });
+  const plan = useQuery({ queryKey: ["plan", selectedDate], queryFn: () => schedulePlan(selectedDate) });
   const subjectTargets = useQuery({ queryKey: ["subject-targets"], queryFn: fetchSubjectTargets });
 
   const all = blocks.data ?? [];
@@ -133,8 +133,9 @@ function TimetablePage() {
         <SegmentedControl value={view} onChange={setView} label="Timetable view" options={[{ value: "list", label: "Agenda" }, { value: "calendar", label: "Calendar" }]} />
 
         <section className="surface-card p-4 sm:p-6">
-          <div className="flex items-center justify-between"><div><p className="section-label">Generated from your syllabus</p><h2 className="mt-1 text-xl font-bold">Today's live agenda</h2></div><span className="rounded-full bg-mint px-3 py-1 text-xs font-bold text-ink">{plan.data?.length ?? 0} blocks</span></div>
-          {plan.isLoading ? <p className="mt-4 text-sm text-muted-foreground">Finding open timetable windows…</p> : plan.data?.length ? <div className="mt-4 grid gap-3 md:grid-cols-2">{plan.data.map((item) => <article key={item.id} className="rounded-2xl border border-border bg-secondary/60 p-4"><div className="flex items-start justify-between gap-3"><div><p className="font-bold">{item.chapter_name ?? item.subject_name ?? "Focus block"}</p><p className="mt-1 text-xs text-muted-foreground">{item.subject_name} · {item.session_kind} · {item.target_minutes} min</p>{item.scheduled_start ? <p className="mt-2 font-mono text-xs font-bold">{item.scheduled_start.slice(0, 5)}–{item.scheduled_end?.slice(0, 5)}</p> : <p className="mt-2 text-xs text-muted-foreground">Open window needed</p>}{item.next_review_at ? <p className="mt-1 text-xs text-brand">Review {new Date(item.next_review_at).toLocaleDateString()}</p> : null}</div><Button size="sm" onClick={() => navigate({ to: "/study", search: { plan: item.id } })}>Start</Button></div></article>)}</div> : <EmptyState image={emptyCalendar} title="No generated plan yet" description="Add subjects and syllabus chapters, then this agenda will schedule itself." />}
+          <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="section-label">Generated from your syllabus</p><h2 className="mt-1 text-xl font-bold">Selectable daily agenda</h2></div><label className="text-xs font-bold text-muted-foreground">Plan date<input type="date" value={selectedDate} onChange={(event) => { const next = event.target.value; setSelectedDate(next); setDay(new Date(`${next}T12:00:00`).getDay()); }} className="field-control mt-1 min-h-10 w-auto" /></label></div>
+          <div className="mt-3 flex items-center justify-between"><p className="text-sm font-semibold">{new Date(`${selectedDate}T12:00:00`).toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p><span className="rounded-full bg-mint px-3 py-1 text-xs font-bold text-ink">{plan.data?.length ?? 0} blocks</span></div>
+          {plan.isLoading ? <p className="mt-4 text-sm text-muted-foreground">Finding open timetable windows…</p> : plan.data?.length ? <div className="mt-4 grid gap-3 md:grid-cols-2">{plan.data.map((item) => <article key={item.id} className={`rounded-2xl border p-4 transition ${item.completed_at ? "border-emerald-400 bg-mint/40" : "border-border bg-secondary/60"}`}><div className="flex items-start justify-between gap-3"><div><p className="font-bold">{item.chapter_name ?? item.subject_name ?? "Focus block"}</p><p className="mt-1 text-xs text-muted-foreground">{item.subject_name} · {item.session_kind} · minimum {item.target_minutes} min</p>{item.scheduled_start ? <p className="mt-2 font-mono text-xs font-bold">{item.scheduled_start.slice(0, 5)}–{item.scheduled_end?.slice(0, 5)}</p> : <p className="mt-2 text-xs text-muted-foreground">Open window needed</p>}{item.next_review_at ? <p className="mt-1 text-xs text-brand">Review {new Date(item.next_review_at).toLocaleDateString()}</p> : null}</div><Button size="sm" disabled={!!item.completed_at} onClick={() => navigate({ to: "/study", search: { plan: item.id, date: selectedDate } })}>{item.completed_at ? "Done" : "Start"}</Button></div></article>)}</div> : <EmptyState image={emptyCalendar} title="No generated plan yet" description="Add subjects and syllabus chapters, then this agenda will schedule itself." />}
         </section>
 
         {subjectTargets.data?.length ? <section className="surface-card p-4 sm:p-6"><h2 className="text-lg font-bold">Daily · weekly · monthly targets</h2><div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">{subjectTargets.data.map((target) => { const subject = (subjects.data ?? []).find((row) => row.id === target.subject_id); return <div key={target.id} className="rounded-2xl bg-secondary p-4"><p className="font-bold">{subject?.name ?? "Subject"}</p><div className="mt-2 grid grid-cols-3 gap-2 text-xs"><span><b className="block">{target.daily_minutes}m</b>daily</span><span><b className="block">{target.weekly_topics}</b>topics/week</span><span><b className="block">{target.monthly_questions}</b>questions/month</span></div></div>; })}</div></section> : null}

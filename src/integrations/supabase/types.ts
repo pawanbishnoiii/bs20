@@ -1852,7 +1852,9 @@ export type Database = {
       }
       user_xp: {
         Row: {
+          best_streak: number
           id: string
+          last_streak_at: string | null
           level: number
           streak: number
           total_xp: number
@@ -1860,7 +1862,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          best_streak?: number
           id?: string
+          last_streak_at?: string | null
           level?: number
           streak?: number
           total_xp?: number
@@ -1868,7 +1872,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          best_streak?: number
           id?: string
+          last_streak_at?: string | null
           level?: number
           streak?: number
           total_xp?: number
