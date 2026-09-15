@@ -2014,7 +2014,7 @@ export type Database = {
         Returns: number
       }
       chapter_pace: {
-        Args: { _user_id?: string }
+        Args: never
         Returns: {
           avg_chapter_minutes: number
           avg_reading_minutes: number
