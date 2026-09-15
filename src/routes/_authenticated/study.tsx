@@ -19,6 +19,8 @@ import {
 import { SubjectsManager } from "@/components/SubjectsManager";
 import { ActivityArtwork, PageHeader, ResponsiveSheet, type ActivityKind } from "@/components/study-ui";
 import { Button } from "@/components/ui/button";
+import { DailyPlanCard } from "@/components/DailyPlanCard";
+import { fetchPlan, fetchSubjectTargets, localDateKey, type PlanItem } from "@/lib/plan";
 import learningPath from "@/assets/chronodeck-learning-path.png";
 
 const SESSION_KINDS = [
@@ -50,7 +52,7 @@ export const Route = createFileRoute("/_authenticated/study")({
 function StudySetupPage() {
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const search = useSearch({ from: "/_authenticated/study" }) as { block?: string };
+  const search = useSearch({ from: "/_authenticated/study" }) as { block?: string; plan?: string };
   const [form, setForm] = useState({
     subject_id: "",
     subject_name: "",
@@ -69,6 +71,8 @@ function StudySetupPage() {
     queryKey: ["sessions", "study-recent"],
     queryFn: () => fetchSessions(new Date(startOfToday().getTime() - 13 * 864e5).toISOString()),
   });
+  const plan = useQuery({ queryKey: ["plan", localDateKey()], queryFn: () => fetchPlan() });
+  const subjectTargets = useQuery({ queryKey: ["subject-targets"], queryFn: fetchSubjectTargets });
   const activeSubject = (subjects.data ?? []).find((s) => s.id === form.subject_id);
 
 
@@ -93,6 +97,19 @@ function StudySetupPage() {
       }));
     }
   }, [blocks.data, running.data, form.subject_id, form.subject_name, search.block]);
+
+  const choosePlanItem = (item: PlanItem) => {
+    const end = new Date(Date.now() + item.target_minutes * 60_000);
+    setForm((current) => ({ ...current, subject_id: item.subject_id ?? "", subject_name: item.subject_name ?? "", chapter: item.chapter_name ?? "", topic: item.chapter_name ?? item.subject_name ?? "", kind: item.session_kind, planned_end_at: item.scheduled_end?.slice(0, 5) ?? end.toTimeString().slice(0, 5) }));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (!search.plan || !plan.data) return;
+    const item = plan.data.find((row) => row.id === search.plan);
+    if (item) choosePlanItem(item);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.plan, plan.data]);
 
   const start = useMutation({
     mutationFn: async () => {
@@ -264,6 +281,10 @@ function StudySetupPage() {
             <button onClick={() => navigate({ to: "/today" })} className="mt-3 min-h-11 w-full text-sm font-semibold text-white/60 hover:text-white">Back to home</button>
           </aside>
         </div>
+
+        <div className="mt-6"><DailyPlanCard sessions={recent.data ?? []} title="Today's plan" onStart={choosePlanItem} /></div>
+
+        {subjectTargets.data?.length ? <section className="surface-card mt-6 p-5 sm:p-6"><h2 className="text-xl font-bold">Subject targets</h2><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{subjectTargets.data.map((target) => { const subject = (subjects.data ?? []).find((row) => row.id === target.subject_id); return <div key={target.id} className="rounded-2xl bg-secondary p-4"><p className="font-bold">{subject?.name ?? "Subject"}</p><p className="mt-1 text-xs text-muted-foreground">{fmtHM(target.daily_minutes)} daily · {target.weekly_topics} topics/week · {target.weekly_questions} questions/week</p></div>; })}</div></section> : null}
 
         {/* Session history — what got recorded from this page */}
         <div className="surface-card mt-6 p-5 sm:p-6">
