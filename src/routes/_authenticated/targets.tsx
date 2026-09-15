@@ -20,6 +20,7 @@ import { SubjectsManager } from "@/components/SubjectsManager";
 import { EmptyState, PageHeader, ResponsiveSheet } from "@/components/study-ui";
 import { Button } from "@/components/ui/button";
 import emptyCalendar from "@/assets/chronodeck-empty-calendar.png";
+import { fetchSubjectTargets } from "@/lib/plan";
 
 const EIGHT_WEEKS = new Date(Date.now() - 8 * 7 * 864e5).toISOString();
 
@@ -52,6 +53,7 @@ function TargetsPage() {
   const subjects = useQuery({ queryKey: ["subjects"], queryFn: fetchSubjects });
   const sessions = useQuery({ queryKey: ["sessions", "8w"], queryFn: () => fetchSessions(EIGHT_WEEKS) });
   const settings = useQuery({ queryKey: ["settings"], queryFn: fetchSettings });
+  const subjectTargets = useQuery({ queryKey: ["subject-targets"], queryFn: fetchSubjectTargets });
 
   const weeklyGoal = settings.data?.weekly_goal_hours ?? 26;
   const weekMin = minutesInRange(sessions.data ?? [], startOfWeek());
@@ -101,6 +103,11 @@ function TargetsPage() {
         <div className="mt-5">
         <SubjectsManager />
         </div>
+      </section>
+
+      <section className="surface-card mt-6 p-5 sm:p-6">
+        <div><p className="section-label">Automatic syllabus goals</p><h2 className="mt-1 text-xl font-bold">Daily · weekly · monthly</h2><p className="mt-1 text-sm text-muted-foreground">Generated from each subject's study hours and syllabus size.</p></div>
+        {subjectTargets.isLoading ? <p className="mt-5 text-sm text-muted-foreground">Calculating balanced targets…</p> : subjectTargets.data?.length ? <div className="mt-5 grid gap-3 md:grid-cols-2">{subjectTargets.data.map((target) => { const subject = (subjects.data ?? []).find((row) => row.id === target.subject_id); return <article key={target.id} className="rounded-2xl border border-border bg-secondary/60 p-4"><div className="flex items-center justify-between gap-3"><h3 className="font-bold">{subject?.name ?? "Subject"}</h3>{target.auto_created ? <span className="rounded-full bg-mint px-2 py-1 text-[10px] font-bold text-ink">AUTO</span> : null}</div><div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs"><div className="rounded-xl bg-panel p-2"><b className="block text-base">{target.daily_minutes}m</b>daily</div><div className="rounded-xl bg-panel p-2"><b className="block text-base">{target.weekly_topics}</b>topics/week</div><div className="rounded-xl bg-panel p-2"><b className="block text-base">{target.monthly_chapters}</b>chapters/month</div></div><p className="mt-3 text-xs text-muted-foreground">Practice: {target.daily_questions}/day · {target.weekly_questions}/week · {target.monthly_questions}/month</p></article>; })}</div> : <p className="mt-5 text-sm text-muted-foreground">Add a subject to generate its goals.</p>}
       </section>
 
       <section className="mt-6 grid gap-4 md:grid-cols-2">
