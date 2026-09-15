@@ -32,6 +32,11 @@ const SESSION_KINDS = [
 
 
 export const Route = createFileRoute("/_authenticated/study")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    block: typeof search.block === "string" ? search.block : undefined,
+    plan: typeof search.plan === "string" ? search.plan : undefined,
+    date: typeof search.date === "string" ? search.date : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Study Mode — Chronodeck" },
@@ -52,7 +57,7 @@ export const Route = createFileRoute("/_authenticated/study")({
 function StudySetupPage() {
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const search = useSearch({ from: "/_authenticated/study" }) as { block?: string; plan?: string; date?: string };
+  const search = useSearch({ from: "/_authenticated/study" });
   const [form, setForm] = useState({
     subject_id: "",
     subject_name: "",

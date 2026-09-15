@@ -22,6 +22,7 @@ import appLogo from "@/assets/chronodeck-logo.png";
 import {
   fetchSessions,
   fetchSettings,
+  fetchXp,
   isAdmin,
   minutesInRange,
   startOfToday,
@@ -29,12 +30,12 @@ import {
   touchLastSeen,
   logEvent,
 } from "@/lib/study";
-import { dailyHitStreak } from "@/lib/streak";
 import { CinematicThemeSwitcher } from "@/components/ui/cinematic-theme-switcher";
 import { LimelightNav } from "@/components/ui/limelight-nav";
 import { PushPrompt } from "@/components/PushPrompt";
 import { NotificationBell } from "@/components/NotificationBell";
 import { StreakFlame } from "@/components/StreakFlame";
+import { InstallAppButton } from "@/components/InstallAppButton";
 import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 
 
@@ -69,6 +70,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     queryFn: () => fetchSessions(EIGHT_WEEKS),
   });
   const settings = useQuery({ queryKey: ["settings"], queryFn: fetchSettings });
+  const xp = useQuery({ queryKey: ["xp"], queryFn: fetchXp });
 
   const dailyGoal = settings.data?.daily_goal_hours ?? 4;
   const all = useMemo(() => sessions.data ?? [], [sessions.data]);
@@ -76,7 +78,8 @@ export function AppShell({ children }: { children: ReactNode }) {
     100,
     Math.round((minutesInRange(all, startOfToday()) / (dailyGoal * 60)) * 100),
   );
-  const streak = useMemo(() => dailyHitStreak(all, dailyGoal), [all, dailyGoal]);
+  const streakAlive = !xp.data?.last_streak_at || Date.now() - new Date(xp.data.last_streak_at).getTime() <= 48 * 60 * 60 * 1000;
+  const streak = streakAlive ? (xp.data?.streak ?? 0) : 0;
 
   useEffect(() => {
     setMenu(false);
@@ -232,6 +235,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-2xl border border-border bg-popover p-1.5 shadow-2xl"
                 >
                   <MenuLink to="/profile" Icon={UserIcon} label="Profile" />
+                  <InstallAppButton />
                   <MenuLink to="/settings" Icon={SettingsIcon} label="Settings" />
                   {admin.data ? <MenuLink to="/admin" Icon={ShieldCheck} label="Admin console" /> : null}
                   <button

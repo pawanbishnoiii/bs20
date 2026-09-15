@@ -24,7 +24,6 @@ import {
   useIdleGlow,
 } from "@/components/motion/gsap-bits";
 import { Mascot, mascotState } from "@/components/Mascot";
-import { dailyHitStreak } from "@/lib/streak";
 import { Icon3D } from "@/components/Icon3D";
 import studentAnim from "@/assets/student-upload.json.asset.json";
 import analyticsAnim from "@/assets/super-woman-upload.json.asset.json";
@@ -49,6 +48,7 @@ import {
   fetchSettings,
   fetchSubjects,
   fetchTargets,
+  fetchXp,
   fmtHM,
   hourlyHeat,
   localTimeToIsoToday,
@@ -119,6 +119,7 @@ function TodayPage() {
   const blocks = useQuery({ queryKey: ["blocks"], queryFn: fetchBlocks });
   const targets = useQuery({ queryKey: ["targets"], queryFn: fetchTargets });
   const settings = useQuery({ queryKey: ["settings"], queryFn: fetchSettings });
+  const xp = useQuery({ queryKey: ["xp"], queryFn: fetchXp });
 
   const motivations = useQuery({
     queryKey: ["motivations"],
@@ -177,7 +178,8 @@ function TodayPage() {
   const monthly = useMemo(() => monthlyHistory(all, weeklyGoal), [all, weeklyGoal]);
   const perDay = useMemo(() => dailyMinutes(all), [all]);
   const ctaRef = useIdleGlow<HTMLButtonElement>();
-  const streak = useMemo(() => dailyHitStreak(all, dailyGoal), [all, dailyGoal]);
+  const streakAlive = !xp.data?.last_streak_at || Date.now() - new Date(xp.data.last_streak_at).getTime() <= 48 * 60 * 60 * 1000;
+  const streak = streakAlive ? (xp.data?.streak ?? 0) : 0;
   const heroMood = mascotState({ goalHit: todayMin >= dailyGoal * 60, streak });
 
   const activeTargets = (targets.data ?? []).filter((t) => t.is_active);
@@ -345,7 +347,7 @@ function TodayPage() {
                   {streak === 1 ? "1 day streak" : `${streak} day streak`}
                 </span>
                 <span className="rounded-full bg-panel/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-                  {streak > 0 ? "Streak safe — keep it alive" : "Hit today's goal to start a streak"}
+                  {streak > 0 ? "48-hour streak window active" : "Finish a session to start your streak"}
                 </span>
               </div>
 

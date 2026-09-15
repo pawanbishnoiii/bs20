@@ -978,15 +978,15 @@ export function relativeTime(iso: string | null | undefined) {
   return new Date(iso).toLocaleDateString();
 }
 
-export type UserXp = { total_xp: number; level: number; streak: number };
+export type UserXp = { total_xp: number; level: number; streak: number; best_streak: number; last_streak_at: string | null };
 
 /** Level + XP + streak for the signed-in user (dashboard header chips). */
 export async function fetchXp(): Promise<UserXp> {
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return { total_xp: 0, level: 1, streak: 0 };
+  if (!auth.user) return { total_xp: 0, level: 1, streak: 0, best_streak: 0, last_streak_at: null };
   const { data, error } = await supabase
     .from("user_xp")
-    .select("total_xp, level, streak")
+    .select("total_xp, level, streak, best_streak, last_streak_at")
     .eq("user_id", auth.user.id)
     .maybeSingle();
   if (error) throw error;
@@ -994,6 +994,8 @@ export async function fetchXp(): Promise<UserXp> {
     total_xp: data?.total_xp ?? 0,
     level: data?.level ?? 1,
     streak: data?.streak ?? 0,
+    best_streak: data?.best_streak ?? 0,
+    last_streak_at: data?.last_streak_at ?? null,
   };
 }
 
