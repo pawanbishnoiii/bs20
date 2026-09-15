@@ -214,16 +214,21 @@ export type Database = {
           chapter_id: string | null
           chapter_name: string
           class_minutes: number
+          class_sessions: number
           created_at: string
+          first_pass_completed_at: string | null
           id: string
           last_recall: number | null
           last_studied_at: string | null
           next_review_at: string
           practice_minutes: number
+          practice_sessions: number
           reading_minutes: number
+          reading_sessions: number
           recall_samples: number
           review_stage: number
           revision_minutes: number
+          revision_sessions: number
           subject_id: string
           updated_at: string
           user_id: string
@@ -232,16 +237,21 @@ export type Database = {
           chapter_id?: string | null
           chapter_name: string
           class_minutes?: number
+          class_sessions?: number
           created_at?: string
+          first_pass_completed_at?: string | null
           id?: string
           last_recall?: number | null
           last_studied_at?: string | null
           next_review_at?: string
           practice_minutes?: number
+          practice_sessions?: number
           reading_minutes?: number
+          reading_sessions?: number
           recall_samples?: number
           review_stage?: number
           revision_minutes?: number
+          revision_sessions?: number
           subject_id: string
           updated_at?: string
           user_id: string
@@ -250,16 +260,21 @@ export type Database = {
           chapter_id?: string | null
           chapter_name?: string
           class_minutes?: number
+          class_sessions?: number
           created_at?: string
+          first_pass_completed_at?: string | null
           id?: string
           last_recall?: number | null
           last_studied_at?: string | null
           next_review_at?: string
           practice_minutes?: number
+          practice_sessions?: number
           reading_minutes?: number
+          reading_sessions?: number
           recall_samples?: number
           review_stage?: number
           revision_minutes?: number
+          revision_sessions?: number
           subject_id?: string
           updated_at?: string
           user_id?: string
@@ -1864,7 +1879,84 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      chapter_time_stats: {
+        Row: {
+          avg_reading_minutes: number | null
+          avg_revision_minutes: number | null
+          avg_session_minutes: number | null
+          chapter_id: string | null
+          chapter_name: string | null
+          class_minutes: number | null
+          first_pass_completed_at: string | null
+          last_studied_at: string | null
+          next_review_at: string | null
+          practice_minutes: number | null
+          reading_minutes: number | null
+          reading_sessions: number | null
+          review_stage: number | null
+          revision_minutes: number | null
+          revision_sessions: number | null
+          subject_id: string | null
+          total_minutes: number | null
+          user_id: string | null
+        }
+        Insert: {
+          avg_reading_minutes?: never
+          avg_revision_minutes?: never
+          avg_session_minutes?: never
+          chapter_id?: string | null
+          chapter_name?: string | null
+          class_minutes?: number | null
+          first_pass_completed_at?: string | null
+          last_studied_at?: string | null
+          next_review_at?: string | null
+          practice_minutes?: number | null
+          reading_minutes?: number | null
+          reading_sessions?: number | null
+          review_stage?: number | null
+          revision_minutes?: number | null
+          revision_sessions?: number | null
+          subject_id?: string | null
+          total_minutes?: never
+          user_id?: string | null
+        }
+        Update: {
+          avg_reading_minutes?: never
+          avg_revision_minutes?: never
+          avg_session_minutes?: never
+          chapter_id?: string | null
+          chapter_name?: string | null
+          class_minutes?: number | null
+          first_pass_completed_at?: string | null
+          last_studied_at?: string | null
+          next_review_at?: string | null
+          practice_minutes?: number | null
+          reading_minutes?: number | null
+          reading_sessions?: number | null
+          review_stage?: number | null
+          revision_minutes?: number | null
+          revision_sessions?: number | null
+          subject_id?: string | null
+          total_minutes?: never
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_learning_state_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapter_learning_state_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       admin_notification_history: {
@@ -1920,6 +2012,16 @@ export type Database = {
       build_study_plan_for_user: {
         Args: { p_plan_date?: string; p_user_id: string }
         Returns: number
+      }
+      chapter_pace: {
+        Args: never
+        Returns: {
+          avg_chapter_minutes: number
+          avg_reading_minutes: number
+          avg_revision_minutes: number
+          chapters_completed: number
+          chapters_tracked: number
+        }[]
       }
       close_stale_sessions: { Args: never; Returns: number }
       ensure_my_subject_targets: { Args: never; Returns: number }
