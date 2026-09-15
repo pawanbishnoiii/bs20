@@ -91,6 +91,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Focus timer, weekly timetable, targets and an AI coach that reads your real study data.",
       },
       { name: "author", content: "Chronodeck" },
+      {
+        name: "google-site-verification",
+        content: "40HcqSBZtxG7G-vu_6XtBvicin58SshO_EGNl19BscM",
+      },
       { name: "theme-color", content: "#17171b" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
