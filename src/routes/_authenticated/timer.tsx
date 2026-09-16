@@ -94,7 +94,7 @@ function TimerPage() {
   // acting while the query is still in flight bounced the page in a loop.
   useEffect(() => {
     if (running.isFetched && !running.isFetching && !running.data) {
-      navigate({ to: "/study", replace: true });
+      navigate({ to: "/study", search: { block: undefined, plan: undefined, date: undefined }, replace: true });
     }
   }, [running.isFetched, running.isFetching, running.data, navigate]);
 

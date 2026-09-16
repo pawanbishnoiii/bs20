@@ -25,7 +25,7 @@ export function CinematicThemeSwitcher({ className = "" }: { className?: string 
   }
 
   if (!mounted) {
-    return <div className={`h-8 w-[58px] rounded-full bg-secondary ${className}`} aria-hidden />;
+    return <div className={`h-9 w-16 rounded-full bg-secondary ${className}`} aria-hidden />;
   }
 
   return (
@@ -35,25 +35,25 @@ export function CinematicThemeSwitcher({ className = "" }: { className?: string 
       aria-checked={isDark}
       aria-label={isDark ? "Switch to day mode" : "Switch to night mode"}
       onClick={handleToggle}
-      className={`relative h-8 w-[58px] shrink-0 overflow-hidden rounded-full border border-border bg-secondary transition-colors ${className}`}
+      className={`theme-toggle relative h-9 w-16 shrink-0 overflow-hidden rounded-full border border-border bg-secondary transition-colors ${className}`}
     >
       {/* inner groove + gloss */}
       <span className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_1px_2px_rgb(15_23_42/0.18)]" />
       <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full bg-gradient-to-b from-white/50 to-transparent dark:from-white/10" />
 
       {/* background icons */}
-      <span className="pointer-events-none absolute inset-0 flex items-center justify-between px-[7px] text-muted-foreground">
-        <Sun className="size-3.5" strokeWidth={2} />
-        <Moon className="size-3.5" strokeWidth={2} />
+      <span className="pointer-events-none absolute inset-0 grid grid-cols-2 place-items-center text-muted-foreground">
+        <span className="grid size-8 place-items-center"><Sun className="size-3.5" strokeWidth={2} /></span>
+        <span className="grid size-8 place-items-center"><Moon className="size-3.5" strokeWidth={2} /></span>
       </span>
 
       {/* thumb */}
       <motion.span
         layout
         transition={{ type: "spring", stiffness: 520, damping: 26, mass: 0.7 }}
-        className="absolute top-1 grid size-6 place-items-center rounded-full text-white shadow-md"
+        className="absolute top-[3px] grid size-7 place-items-center rounded-full text-primary-foreground shadow-md"
         style={{
-          left: isDark ? 30 : 4,
+          left: isDark ? 33 : 3,
           background: isDark
             ? "linear-gradient(135deg,#312e81,#0f172a)"
             : "linear-gradient(135deg,var(--accent-start),var(--accent-end))",

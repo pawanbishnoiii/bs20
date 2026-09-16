@@ -1,9 +1,5 @@
-- [ ] Remove MP4 usage; integrate uploaded JSON/Rive animations without removing existing images
-- [ ] Create four transparent activity icons and use in launcher and plan items
-- [ ] Show average chapter pace on Study
-- [ ] Add selectable generated-plan agenda to timetable date picker
-- [ ] Add phone/desktop installability
-- [ ] Upgrade streak to 48-hour grace behavior
-- [ ] Import uploaded history into user 6494dac1-06e2-437f-8e9d-c0e8926a107e
-- [ ] Fix profile image upload RLS failure
-- [ ] Verify mobile plan-to-timer-to-completion-to-Today flow and desktop/mobile UI
+- [ ] Polish Today analytics and add real animated status cards
+- [ ] Upgrade Study activity icons, pace insights, uploaded visual and Rive animation
+- [ ] Fix theme toggle alignment and strengthen day/night styling
+- [ ] Verify Today and Study on phone/desktop in light/dark modes
+- [ ] Run lint and production build checks
