@@ -2,10 +2,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import artReading from "@/assets/activity-reading-new.png";
-import artRevision from "@/assets/activity-revision-new.png";
-import artClass from "@/assets/activity-class-new.png";
-import artPractice from "@/assets/activity-practice-new.png";
+import artReading from "@/assets/activity-reading-clay.png";
+import artRevision from "@/assets/activity-revision-clay.png";
+import artClass from "@/assets/activity-class-clay.png";
+import artPractice from "@/assets/activity-practice-clay.png";
 import { Button } from "@/components/ui/button";
 
 export type ActivityKind = "reading" | "revision" | "class" | "practice";
@@ -23,8 +23,8 @@ export function ActivityArtwork({ kind, className }: { kind: ActivityKind; class
       src={activityArtwork[kind]}
       alt=""
       aria-hidden="true"
-      width={512}
-      height={512}
+      width={768}
+      height={768}
       loading="lazy"
       className={cn("block object-contain", className)}
     />
