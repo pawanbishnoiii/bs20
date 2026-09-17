@@ -207,10 +207,43 @@ export function UsageInsights() {
                 <option value="moderator">moderator</option>
                 <option value="admin">admin</option>
               </select>
+              <div className="mt-1 flex justify-end gap-1">
+                <button
+                  type="button"
+                  onClick={() => setPreview({ id: u.id, name: u.display_name ?? u.email ?? "User" })}
+                  className="rounded-full border border-border px-2 py-1 text-[10px] font-bold"
+                >
+                  Preview
+                </button>
+                <button
+                  type="button"
+                  disabled={busy === u.id}
+                  onClick={() => void doExport(u.id, u.display_name ?? u.email ?? u.id)}
+                  className="rounded-full border border-border px-2 py-1 text-[10px] font-bold disabled:opacity-50"
+                >
+                  Download
+                </button>
+                <button
+                  type="button"
+                  disabled={busy === u.id}
+                  onClick={() => doImport(u.id)}
+                  className="rounded-full border border-border px-2 py-1 text-[10px] font-bold disabled:opacity-50"
+                >
+                  Import
+                </button>
+              </div>
             </div>
           </li>
         ))}
       </ul>
+
+      {preview ? (
+        <AdminUserDrawer
+          userId={preview.id}
+          name={preview.name}
+          onClose={() => setPreview(null)}
+        />
+      ) : null}
     </section>
   );
 }
