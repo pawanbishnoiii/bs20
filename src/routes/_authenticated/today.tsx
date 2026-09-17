@@ -818,30 +818,19 @@ function TodayPage() {
           </p>
         </section>
 
-        {/* Motivation + magazine */}
-        <section className="grid gap-3">
-          {quote ? (
-            <div className="rounded-2xl border border-border bg-panel p-5">
-              <div className="flex items-center gap-3">
-                <Icon3D name="trophy" size={32} />
-                <h2 className="text-base font-bold tracking-tight">{quote.title}</h2>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{quote.body}</p>
-              {quote.author ? (
-                <p className="mt-2 font-mono text-[10px] text-brand uppercase">— {quote.author}</p>
-              ) : null}
+        {/* Daily motivation */}
+        {quote ? (
+          <section className="rounded-2xl border border-border bg-panel p-5">
+            <div className="flex items-center gap-3">
+              <Icon3D name="trophy" size={32} />
+              <h2 className="text-base font-bold tracking-tight">{quote.title}</h2>
             </div>
-          ) : null}
-          {magazine ? (
-            <div className="rounded-2xl border border-warm/25 bg-warm/5 p-5">
-              <div className="flex items-center gap-3">
-                <Icon3D name="magazine" size={32} />
-                <h2 className="text-base font-bold tracking-tight">{magazine.title}</h2>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{magazine.body}</p>
-            </div>
-          ) : null}
-        </section>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{quote.body}</p>
+            {quote.author ? (
+              <p className="mt-2 font-mono text-[10px] text-brand uppercase">— {quote.author}</p>
+            ) : null}
+          </section>
+        ) : null}
       </div>
 
       {/* Start sheet */}
