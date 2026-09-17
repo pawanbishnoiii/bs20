@@ -135,7 +135,7 @@ function ClassesPage() {
     <div className="mx-auto w-full max-w-3xl space-y-5 px-4 pb-28 pt-4 sm:px-6">
       <PageHeader
         title="Online classes"
-        subtitle="Mark a class complete and its notes go into the revision ladder."
+        description="Mark a class complete and its notes go into the revision ladder."
         action={
           <Button onClick={() => setOpen(true)} className="gap-2">
             <Plus className="size-4" /> Add class
@@ -205,7 +205,7 @@ function ClassesPage() {
           <EmptyState
             image={emptyCalendar}
             title="No classes yet"
-            body="Add the classes you have already attended and pick the chapter they covered."
+            description="Add the classes you have already attended and pick the chapter they covered."
           />
         ) : (
           <ul className="mt-4 space-y-2.5">
@@ -256,7 +256,7 @@ function ClassesPage() {
       </section>
 
       {open ? (
-        <ResponsiveSheet title="Add online class" onClose={() => setOpen(false)}>
+        <ResponsiveSheet open title="Add online class" onClose={() => setOpen(false)}>
           <div className="grid gap-3">
             <label className="block text-xs font-bold text-muted-foreground">
               Class title
