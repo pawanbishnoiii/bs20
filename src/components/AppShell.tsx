@@ -235,6 +235,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-2xl border border-border bg-popover p-1.5 shadow-2xl"
                 >
                   <MenuLink to="/profile" Icon={UserIcon} label="Profile" />
+                  <MenuLink to="/classes" Icon={GraduationCap} label="Online classes" />
                   <InstallAppButton />
                   <MenuLink to="/settings" Icon={SettingsIcon} label="Settings" />
                   {admin.data ? <MenuLink to="/admin" Icon={ShieldCheck} label="Admin console" /> : null}
