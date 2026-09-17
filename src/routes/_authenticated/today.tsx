@@ -26,12 +26,11 @@ import {
 import { Mascot, mascotState } from "@/components/Mascot";
 import { Icon3D } from "@/components/Icon3D";
 import studentAnim from "@/assets/student-upload.json.asset.json";
-import analyticsAnim from "@/assets/super-woman-upload.json.asset.json";
 import { LottiePlayer } from "@/components/ui/lottie-player";
 import { StreakFlame } from "@/components/StreakFlame";
 import { ReadingHabitCard } from "@/components/ReadingHabitCard";
 import { DailyPlanCard } from "@/components/DailyPlanCard";
-import { AnimationShowcase } from "@/components/AnimationShowcase";
+import { StatsCard, type ChartDataItem } from "@/components/ui/stats-card";
 import { fetchAttempts, subjectPerformance } from "@/lib/plan";
 
 import {
