@@ -109,6 +109,7 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
               month: "short",
             })}{" "}
             · {doneCount}/{items.length} done · {fmtHM(plannedMinutes)} planned
+            {queued > PLAN_VISIBLE_LIMIT ? ` · ${queued - PLAN_VISIBLE_LIMIT} queued` : ""}
           </p>
         </div>
         <div className="ml-auto flex items-center gap-2">
