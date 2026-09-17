@@ -2,14 +2,18 @@ import { useEffect, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { CalendarDays, Check, Loader2, Play, RefreshCw } from "lucide-react";
+import { CalendarDays, Check, Loader2, Play, RefreshCw, SkipForward, X } from "lucide-react";
 import {
+  PLAN_VISIBLE_LIMIT,
   fetchPlan,
   generatePlan,
   localDateKey,
   planItemMinutes,
   planItemStatus,
   setPlanItemDone,
+  setPlanItemState,
+  visiblePlanItems,
+  type PlanItemState,
   type PlanStatus,
   type PlanItem,
 } from "@/lib/plan";
@@ -27,11 +31,14 @@ const STATUS_STYLE: Record<PlanStatus, { label: string; cls: string }> = {
 const KIND_ART: Record<string, "reading" | "class" | "revision" | "practice"> = {
   reading: "reading",
   revision: "revision",
+  notes_revision: "revision",
   class: "class",
   live: "class",
   practice: "practice",
   test: "practice",
 };
+
+const KIND_LABEL: Record<string, string> = { notes_revision: "class notes revision" };
 
 /**
  * Today's automatic study plan. If the syllabus produced no plan for today yet,
