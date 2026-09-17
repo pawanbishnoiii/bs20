@@ -396,6 +396,82 @@ export type Database = {
           },
         ]
       }
+      class_note_revision_state: {
+        Row: {
+          chapter_id: string | null
+          chapter_name: string | null
+          class_id: string
+          created_at: string
+          id: string
+          last_revised_at: string | null
+          next_review_at: string
+          review_stage: number
+          revisions_done: number
+          subject_id: string | null
+          target_revisions: number
+          title: string
+          total_minutes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          chapter_name?: string | null
+          class_id: string
+          created_at?: string
+          id?: string
+          last_revised_at?: string | null
+          next_review_at?: string
+          review_stage?: number
+          revisions_done?: number
+          subject_id?: string | null
+          target_revisions?: number
+          title: string
+          total_minutes?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string | null
+          chapter_name?: string | null
+          class_id?: string
+          created_at?: string
+          id?: string
+          last_revised_at?: string | null
+          next_review_at?: string
+          review_stage?: number
+          revisions_done?: number
+          subject_id?: string | null
+          target_revisions?: number
+          title?: string
+          total_minutes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_note_revision_state_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_note_revision_state_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "online_classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_note_revision_state_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       class_progress: {
         Row: {
           class_id: string
@@ -455,8 +531,10 @@ export type Database = {
       }
       daily_study_plan_items: {
         Row: {
+          cancelled_at: string | null
           chapter_id: string | null
           chapter_name: string | null
+          class_id: string | null
           completed_at: string | null
           completed_session_id: string | null
           created_at: string
@@ -465,11 +543,14 @@ export type Database = {
           pinned: boolean
           plan_date: string
           priority: number
+          rank_score: number
           review_stage: number | null
           scheduled_end: string | null
           scheduled_start: string | null
           session_kind: string
+          skipped_at: string | null
           source: string
+          status: string
           subject_id: string | null
           subject_name: string | null
           subtopic_id: string | null
@@ -478,8 +559,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          cancelled_at?: string | null
           chapter_id?: string | null
           chapter_name?: string | null
+          class_id?: string | null
           completed_at?: string | null
           completed_session_id?: string | null
           created_at?: string
@@ -488,11 +571,14 @@ export type Database = {
           pinned?: boolean
           plan_date: string
           priority?: number
+          rank_score?: number
           review_stage?: number | null
           scheduled_end?: string | null
           scheduled_start?: string | null
           session_kind?: string
+          skipped_at?: string | null
           source?: string
+          status?: string
           subject_id?: string | null
           subject_name?: string | null
           subtopic_id?: string | null
@@ -501,8 +587,10 @@ export type Database = {
           user_id: string
         }
         Update: {
+          cancelled_at?: string | null
           chapter_id?: string | null
           chapter_name?: string | null
+          class_id?: string | null
           completed_at?: string | null
           completed_session_id?: string | null
           created_at?: string
@@ -511,11 +599,14 @@ export type Database = {
           pinned?: boolean
           plan_date?: string
           priority?: number
+          rank_score?: number
           review_stage?: number | null
           scheduled_end?: string | null
           scheduled_start?: string | null
           session_kind?: string
+          skipped_at?: string | null
           source?: string
+          status?: string
           subject_id?: string | null
           subject_name?: string | null
           subtopic_id?: string | null
@@ -529,6 +620,13 @@ export type Database = {
             columns: ["chapter_id"]
             isOneToOne: false
             referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_study_plan_items_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "online_classes"
             referencedColumns: ["id"]
           },
           {
@@ -797,11 +895,15 @@ export type Database = {
       online_classes: {
         Row: {
           chapter_id: string | null
+          chapter_name: string | null
+          completed_at: string | null
           created_at: string
           duration_minutes: number | null
           id: string
           mode: string
+          notes_taken: boolean
           scheduled_at: string | null
+          status: string
           subject_id: string | null
           title: string
           updated_at: string
@@ -810,11 +912,15 @@ export type Database = {
         }
         Insert: {
           chapter_id?: string | null
+          chapter_name?: string | null
+          completed_at?: string | null
           created_at?: string
           duration_minutes?: number | null
           id?: string
           mode?: string
+          notes_taken?: boolean
           scheduled_at?: string | null
+          status?: string
           subject_id?: string | null
           title: string
           updated_at?: string
@@ -823,11 +929,15 @@ export type Database = {
         }
         Update: {
           chapter_id?: string | null
+          chapter_name?: string | null
+          completed_at?: string | null
           created_at?: string
           duration_minutes?: number | null
           id?: string
           mode?: string
+          notes_taken?: boolean
           scheduled_at?: string | null
+          status?: string
           subject_id?: string | null
           title?: string
           updated_at?: string
@@ -988,6 +1098,7 @@ export type Database = {
           log_date: string
           minutes: number
           note: string | null
+          sittings: number
           updated_at: string
           user_id: string
         }
@@ -998,6 +1109,7 @@ export type Database = {
           log_date?: string
           minutes?: number
           note?: string | null
+          sittings?: number
           updated_at?: string
           user_id: string
         }
@@ -1008,6 +1120,7 @@ export type Database = {
           log_date?: string
           minutes?: number
           note?: string | null
+          sittings?: number
           updated_at?: string
           user_id?: string
         }
@@ -1965,6 +2078,11 @@ export type Database = {
       }
     }
     Functions: {
+      admin_export_user: { Args: { _user_id: string }; Returns: Json }
+      admin_import_user: {
+        Args: { _payload: Json; _user_id: string }
+        Returns: number
+      }
       admin_notification_history: {
         Args: { _limit?: number }
         Returns: {
@@ -2000,6 +2118,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      admin_user_detail: { Args: { _user_id: string }; Returns: Json }
       admin_users: {
         Args: { _limit?: number }
         Returns: {
@@ -2047,6 +2166,7 @@ export type Database = {
           log_date: string
           minutes: number
           note: string | null
+          sittings: number
           updated_at: string
           user_id: string
         }
@@ -2062,6 +2182,10 @@ export type Database = {
       review_interval_days: { Args: { _stage: number }; Returns: number }
       schedule_my_daily_plan: {
         Args: { p_plan_date?: string }
+        Returns: number
+      }
+      set_plan_item_status: {
+        Args: { _item_id: string; _status: string }
         Returns: number
       }
       touch_last_seen: { Args: never; Returns: undefined }
