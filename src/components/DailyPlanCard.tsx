@@ -156,7 +156,8 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
                     {item.chapter_name ?? item.subject_name ?? "Focus block"}
                   </p>
                   <p className="mt-0.5 text-xs font-semibold text-muted-foreground capitalize">
-                    {item.subject_name ? `${item.subject_name} · ` : ""}{item.session_kind} · {fmtHM(item.target_minutes)} target
+                    {item.subject_name ? `${item.subject_name} · ` : ""}
+                    {KIND_LABEL[item.session_kind] ?? item.session_kind} · min {fmtHM(item.target_minutes)}
                     {minutes > 0 ? ` · ${fmtHM(minutes)} done` : ""}
                   </p>
                   <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-muted">
@@ -166,25 +167,56 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
                     />
                   </span>
                 </div>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${style.cls}`}
-                >
-                  {style.label}
-                </span>
-                {onStart && status !== "complete" ? <button type="button" onClick={() => onStart(item)} aria-label={`Start ${item.chapter_name ?? item.subject_name ?? "plan item"}`} className="grid size-9 shrink-0 place-items-center rounded-full bg-foreground text-background"><Play className="size-4" aria-hidden="true" /></button> : null}
-                <button
-                  onClick={() =>
-                    toggle.mutate({ id: item.id, done: !item.completed_at })
-                  }
-                  aria-label={item.completed_at ? "Mark as pending" : "Mark as complete"}
-                  className={`grid size-9 shrink-0 place-items-center rounded-full border transition ${
-                    item.completed_at
-                      ? "border-transparent bg-foreground text-background"
-                      : "border-border text-muted-foreground"
-                  }`}
-                >
-                  <Check className="size-4" aria-hidden="true" />
-                </button>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <span className={`hidden rounded-full px-2.5 py-1 text-[11px] font-bold sm:inline ${style.cls}`}>
+                    {style.label}
+                  </span>
+                  {onStart && status !== "complete" ? (
+                    <button
+                      type="button"
+                      onClick={() => onStart(item)}
+                      aria-label={`Start ${item.chapter_name ?? item.subject_name ?? "plan item"}`}
+                      className="grid size-9 place-items-center rounded-full bg-foreground text-background"
+                    >
+                      <Play className="size-4" aria-hidden="true" />
+                    </button>
+                  ) : null}
+                  {status !== "complete" ? (
+                    <>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => setState.mutate({ id: item.id, status: "skipped" })}
+                        aria-label="Skip this task for today"
+                        title="Skip"
+                        className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground disabled:opacity-50"
+                      >
+                        <SkipForward className="size-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => setState.mutate({ id: item.id, status: "cancelled" })}
+                        aria-label="Cancel this task"
+                        title="Cancel"
+                        className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground disabled:opacity-50"
+                      >
+                        <X className="size-4" aria-hidden="true" />
+                      </button>
+                    </>
+                  ) : null}
+                  <button
+                    onClick={() => toggle.mutate({ id: item.id, done: !item.completed_at })}
+                    aria-label={item.completed_at ? "Mark as pending" : "Mark as complete"}
+                    className={`grid size-9 place-items-center rounded-full border transition ${
+                      item.completed_at
+                        ? "border-transparent bg-foreground text-background"
+                        : "border-border text-muted-foreground"
+                    }`}
+                  >
+                    <Check className="size-4" aria-hidden="true" />
+                  </button>
+                </div>
               </li>
             );
           })}
