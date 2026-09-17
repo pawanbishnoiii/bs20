@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CalendarDays,
+  GraduationCap,
   History as HistoryIcon,
   LayoutDashboard,
   LogOut,
