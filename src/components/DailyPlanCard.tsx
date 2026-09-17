@@ -145,17 +145,17 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
             return (
               <li
                 key={item.id}
-                className="flex items-center gap-3 rounded-2xl border border-border bg-panel p-3"
+                className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-border bg-panel p-3"
               >
                 <ActivityArtwork
                   kind={KIND_ART[item.session_kind] ?? "reading"}
                   className="size-11 shrink-0"
                 />
-                <div className="min-w-0 flex-1">
+                <div className="min-w-[8rem] flex-1 basis-40">
                   <p className="truncate text-sm font-bold">
                     {item.chapter_name ?? item.subject_name ?? "Focus block"}
                   </p>
-                  <p className="mt-0.5 text-xs font-semibold text-muted-foreground capitalize">
+                  <p className="mt-0.5 truncate text-xs font-semibold text-muted-foreground capitalize">
                     {item.subject_name ? `${item.subject_name} · ` : ""}
                     {KIND_LABEL[item.session_kind] ?? item.session_kind} · min {fmtHM(item.target_minutes)}
                     {minutes > 0 ? ` · ${fmtHM(minutes)} done` : ""}
@@ -167,8 +167,8 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
                     />
                   </span>
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <span className={`hidden rounded-full px-2.5 py-1 text-[11px] font-bold sm:inline ${style.cls}`}>
+                <div className="ml-auto flex shrink-0 items-center gap-1.5">
+                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${style.cls}`}>
                     {style.label}
                   </span>
                   {onStart && status !== "complete" ? (
