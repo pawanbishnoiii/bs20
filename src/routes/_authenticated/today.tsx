@@ -191,12 +191,6 @@ function TodayPage() {
     return qs[new Date().getDate() % qs.length] ?? null;
   }, [motivations.data]);
 
-  const magazine = useMemo(() => {
-    const ms = (motivations.data ?? []).filter((m) => m.kind === "magazine");
-    if (!ms.length) return null;
-    const month = new Date().getMonth() + 1;
-    return ms.find((m) => m.month === month) ?? ms[month % ms.length] ?? null;
-  }, [motivations.data]);
 
   const hours = useMemo(() => hourlyHeat(all), [all]);
   const subjWindow = useMemo(() => {
