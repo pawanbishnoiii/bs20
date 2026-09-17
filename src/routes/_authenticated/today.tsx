@@ -436,8 +436,37 @@ function TodayPage() {
             </div>
           </div>
 
-          <div className="today-analytics-motion mt-4 grid h-24 place-items-center overflow-hidden rounded-2xl bg-[var(--lavender-soft)] sm:h-28">
-            <LottiePlayer src={analyticsAnim.url} className="h-28 w-full max-w-xs sm:h-32" />
+          {/* Real question-level performance, pulled from recorded attempts */}
+          <div className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
+            <StatsCard
+              title="Attempted"
+              currentValue={qStats.attempted}
+              description="Questions attempted across all subjects"
+              chartData={qStats.chart}
+              tone="lavender"
+            />
+            <StatsCard
+              title="Correct"
+              currentValue={qStats.correct}
+              description="Answers you got right"
+              chartData={qStats.chart}
+              tone="mint"
+            />
+            <StatsCard
+              title="Incorrect"
+              currentValue={qStats.incorrect}
+              description="Worth a revision pass"
+              chartData={qStats.chart}
+              tone="coral"
+            />
+            <StatsCard
+              title="Average"
+              currentValue={qStats.accuracy}
+              valuePostfix="%"
+              description="Overall accuracy"
+              chartData={qStats.chart}
+              tone="sky"
+            />
           </div>
 
           <p className="num mt-4 text-3xl font-semibold">
