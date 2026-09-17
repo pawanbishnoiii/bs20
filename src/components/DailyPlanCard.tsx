@@ -67,19 +67,32 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
     onError: (e: Error) => toast.error(e.message),
   });
 
+  // Skip / cancel: the database refills the board with the next best task.
+  const setState = useMutation({
+    mutationFn: (v: { id: string; status: PlanItemState }) => setPlanItemState(v.id, v.status),
+    onSuccess: (_d, v) => {
+      qc.invalidateQueries({ queryKey: ["plan", planDate] });
+      toast.success(v.status === "skipped" ? "Task skipped — next one added" : "Task cancelled");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   // Auto-build today's plan exactly once when the day starts empty.
   useEffect(() => {
     if (plan.isSuccess && (plan.data?.length ?? 0) === 0 && regenerate.isIdle)
       regenerate.mutate();
   }, [plan.isSuccess, plan.data, regenerate]);
 
-  const items = plan.data ?? [];
+  const all = plan.data ?? [];
+  const items = visiblePlanItems(all);
+  const queued = all.filter((i) => i.status === "pending" && !i.completed_at).length;
   const rows = items.map((item) => {
     const minutes = planItemMinutes(item, sessions, since);
     return { item, minutes, status: planItemStatus(item, minutes) };
   });
   const doneCount = rows.filter((r) => r.status === "complete").length;
   const plannedMinutes = items.reduce((a, i) => a + i.target_minutes, 0);
+  const busy = setState.isPending;
 
   return (
     <section className="surface-card p-5 sm:p-6">
