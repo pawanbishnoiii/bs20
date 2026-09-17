@@ -65,7 +65,7 @@ export function StatsCard({
     >
       <p className="truncate text-xs font-bold text-muted-foreground">{title}</p>
       <p className="num mt-2 text-2xl font-extrabold sm:text-3xl">
-        <AnimatedValue value={currentValue} postfix={valuePostfix} />
+        <AnimatedValue value={currentValue} {...(valuePostfix ? { postfix: valuePostfix } : {})} />
       </p>
       <div className="mt-1 min-h-10 text-xs leading-5 text-muted-foreground">{description}</div>
       <div className="mt-4 flex h-14 items-end gap-1.5" aria-label={`${title} activity chart`}>
