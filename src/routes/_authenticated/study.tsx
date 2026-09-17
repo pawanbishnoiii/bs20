@@ -32,11 +32,13 @@ const SESSION_KINDS = [
 
 
 export const Route = createFileRoute("/_authenticated/study")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    block: typeof search.block === "string" ? search.block : undefined,
-    plan: typeof search.plan === "string" ? search.plan : undefined,
-    date: typeof search.date === "string" ? search.date : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>) => {
+    const out: { block?: string; plan?: string; date?: string } = {};
+    if (typeof search["block"] === "string") out.block = search["block"];
+    if (typeof search["plan"] === "string") out.plan = search["plan"];
+    if (typeof search["date"] === "string") out.date = search["date"];
+    return out;
+  },
   head: () => ({
     meta: [
       { title: "Study Mode — Chronodeck" },
