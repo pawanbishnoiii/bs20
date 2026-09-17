@@ -427,8 +427,6 @@ function TodayPage() {
           onStart={(item) => navigate({ to: "/study", search: { plan: item.id } })}
         />
 
-        <AnimationShowcase />
-
         {/* Analytics calendar */}
         <Reveal className="glass-panel today-analytics overflow-hidden p-4 sm:p-5">
           <div className="flex items-center justify-between">
