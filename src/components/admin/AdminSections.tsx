@@ -98,12 +98,48 @@ export function OverviewStats() {
 export function UsageInsights() {
   const users = useQuery({ queryKey: ["admin-users"], queryFn: () => fetchAdminUsers(100) });
   const [q, setQ] = useState("");
+  const [preview, setPreview] = useState<{ id: string; name: string } | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
 
   const list = (users.data ?? []).filter((u) =>
     q.trim()
       ? `${u.display_name ?? ""} ${u.email ?? ""}`.toLowerCase().includes(q.trim().toLowerCase())
       : true,
   );
+
+  const doExport = async (id: string, label: string) => {
+    setBusy(id);
+    try {
+      const payload = await exportUserData(id);
+      downloadJson(`chronodeck-${label.replace(/\W+/g, "-").toLowerCase()}.json`, payload);
+      sonner.success("History downloaded");
+    } catch (err) {
+      sonner.error((err as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const doImport = (id: string) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json";
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      setBusy(id);
+      try {
+        const payload = JSON.parse(await file.text()) as unknown;
+        const added = await importUserData(id, payload);
+        sonner.success(`Imported — ${added} subjects added`);
+      } catch (err) {
+        sonner.error((err as Error).message);
+      } finally {
+        setBusy(null);
+      }
+    };
+    input.click();
+  };
 
   return (
     <section className="rounded-3xl border border-border bg-panel p-4 sm:p-5">
