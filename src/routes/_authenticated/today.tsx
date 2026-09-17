@@ -223,6 +223,24 @@ function TodayPage() {
     [subjects.data, all, attempts.data, subjWindow],
   );
 
+  /** Question-level totals for the analytics stat cards, from real attempts. */
+  const qStats = useMemo(() => {
+    const attempted = perf.reduce((a, s) => a + s.attempted, 0);
+    const correct = perf.reduce((a, s) => a + s.correct, 0);
+    const chart: ChartDataItem[] = (perf.length ? perf : []).slice(0, 8).map((s) => ({
+      name: s.name,
+      value: s.attempted > 0 ? s.accuracy : s.pct,
+    }));
+    return {
+      attempted,
+      correct,
+      incorrect: Math.max(0, attempted - correct),
+      accuracy: attempted > 0 ? Math.round((correct / attempted) * 100) : 0,
+      chart: chart.length ? chart : [{ name: "No data", value: 6 }],
+    };
+  }, [perf]);
+
+
   const saveSubjectTarget = useMutation({
     mutationFn: async (v: { id: string; hours: number }) =>
       updateSubject(v.id, { weekly_target_hours: v.hours }),
