@@ -26,12 +26,11 @@ import {
 import { Mascot, mascotState } from "@/components/Mascot";
 import { Icon3D } from "@/components/Icon3D";
 import studentAnim from "@/assets/student-upload.json.asset.json";
-import analyticsAnim from "@/assets/super-woman-upload.json.asset.json";
 import { LottiePlayer } from "@/components/ui/lottie-player";
 import { StreakFlame } from "@/components/StreakFlame";
 import { ReadingHabitCard } from "@/components/ReadingHabitCard";
 import { DailyPlanCard } from "@/components/DailyPlanCard";
-import { AnimationShowcase } from "@/components/AnimationShowcase";
+import { StatsCard, type ChartDataItem } from "@/components/ui/stats-card";
 import { fetchAttempts, subjectPerformance } from "@/lib/plan";
 
 import {
@@ -192,12 +191,6 @@ function TodayPage() {
     return qs[new Date().getDate() % qs.length] ?? null;
   }, [motivations.data]);
 
-  const magazine = useMemo(() => {
-    const ms = (motivations.data ?? []).filter((m) => m.kind === "magazine");
-    if (!ms.length) return null;
-    const month = new Date().getMonth() + 1;
-    return ms.find((m) => m.month === month) ?? ms[month % ms.length] ?? null;
-  }, [motivations.data]);
 
   const hours = useMemo(() => hourlyHeat(all), [all]);
   const subjWindow = useMemo(() => {
@@ -223,6 +216,24 @@ function TodayPage() {
       ),
     [subjects.data, all, attempts.data, subjWindow],
   );
+
+  /** Question-level totals for the analytics stat cards, from real attempts. */
+  const qStats = useMemo(() => {
+    const attempted = perf.reduce((a, s) => a + s.attempted, 0);
+    const correct = perf.reduce((a, s) => a + s.correct, 0);
+    const chart: ChartDataItem[] = (perf.length ? perf : []).slice(0, 8).map((s) => ({
+      name: s.name,
+      value: s.attempted > 0 ? s.accuracy : s.pct,
+    }));
+    return {
+      attempted,
+      correct,
+      incorrect: Math.max(0, attempted - correct),
+      accuracy: attempted > 0 ? Math.round((correct / attempted) * 100) : 0,
+      chart: chart.length ? chart : [{ name: "No data", value: 6 }],
+    };
+  }, [perf]);
+
 
   const saveSubjectTarget = useMutation({
     mutationFn: async (v: { id: string; hours: number }) =>
@@ -410,8 +421,6 @@ function TodayPage() {
           onStart={(item) => navigate({ to: "/study", search: { plan: item.id } })}
         />
 
-        <AnimationShowcase />
-
         {/* Analytics calendar */}
         <Reveal className="glass-panel today-analytics overflow-hidden p-4 sm:p-5">
           <div className="flex items-center justify-between">
@@ -436,8 +445,37 @@ function TodayPage() {
             </div>
           </div>
 
-          <div className="today-analytics-motion mt-4 grid h-24 place-items-center overflow-hidden rounded-2xl bg-[var(--lavender-soft)] sm:h-28">
-            <LottiePlayer src={analyticsAnim.url} className="h-28 w-full max-w-xs sm:h-32" />
+          {/* Real question-level performance, pulled from recorded attempts */}
+          <div className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
+            <StatsCard
+              title="Attempted"
+              currentValue={qStats.attempted}
+              description="Questions attempted across all subjects"
+              chartData={qStats.chart}
+              tone="lavender"
+            />
+            <StatsCard
+              title="Correct"
+              currentValue={qStats.correct}
+              description="Answers you got right"
+              chartData={qStats.chart}
+              tone="mint"
+            />
+            <StatsCard
+              title="Incorrect"
+              currentValue={qStats.incorrect}
+              description="Worth a revision pass"
+              chartData={qStats.chart}
+              tone="coral"
+            />
+            <StatsCard
+              title="Average"
+              currentValue={qStats.accuracy}
+              valuePostfix="%"
+              description="Overall accuracy"
+              chartData={qStats.chart}
+              tone="sky"
+            />
           </div>
 
           <p className="num mt-4 text-3xl font-semibold">
@@ -774,30 +812,19 @@ function TodayPage() {
           </p>
         </section>
 
-        {/* Motivation + magazine */}
-        <section className="grid gap-3">
-          {quote ? (
-            <div className="rounded-2xl border border-border bg-panel p-5">
-              <div className="flex items-center gap-3">
-                <Icon3D name="trophy" size={32} />
-                <h2 className="text-base font-bold tracking-tight">{quote.title}</h2>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{quote.body}</p>
-              {quote.author ? (
-                <p className="mt-2 font-mono text-[10px] text-brand uppercase">— {quote.author}</p>
-              ) : null}
+        {/* Daily motivation */}
+        {quote ? (
+          <section className="rounded-2xl border border-border bg-panel p-5">
+            <div className="flex items-center gap-3">
+              <Icon3D name="trophy" size={32} />
+              <h2 className="text-base font-bold tracking-tight">{quote.title}</h2>
             </div>
-          ) : null}
-          {magazine ? (
-            <div className="rounded-2xl border border-warm/25 bg-warm/5 p-5">
-              <div className="flex items-center gap-3">
-                <Icon3D name="magazine" size={32} />
-                <h2 className="text-base font-bold tracking-tight">{magazine.title}</h2>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{magazine.body}</p>
-            </div>
-          ) : null}
-        </section>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{quote.body}</p>
+            {quote.author ? (
+              <p className="mt-2 font-mono text-[10px] text-brand uppercase">— {quote.author}</p>
+            ) : null}
+          </section>
+        ) : null}
       </div>
 
       {/* Start sheet */}

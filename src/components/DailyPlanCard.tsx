@@ -2,14 +2,18 @@ import { useEffect, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { CalendarDays, Check, Loader2, Play, RefreshCw } from "lucide-react";
+import { CalendarDays, Check, Loader2, Play, RefreshCw, SkipForward, X } from "lucide-react";
 import {
+  PLAN_VISIBLE_LIMIT,
   fetchPlan,
   generatePlan,
   localDateKey,
   planItemMinutes,
   planItemStatus,
   setPlanItemDone,
+  setPlanItemState,
+  visiblePlanItems,
+  type PlanItemState,
   type PlanStatus,
   type PlanItem,
 } from "@/lib/plan";
@@ -27,11 +31,14 @@ const STATUS_STYLE: Record<PlanStatus, { label: string; cls: string }> = {
 const KIND_ART: Record<string, "reading" | "class" | "revision" | "practice"> = {
   reading: "reading",
   revision: "revision",
+  notes_revision: "revision",
   class: "class",
   live: "class",
   practice: "practice",
   test: "practice",
 };
+
+const KIND_LABEL: Record<string, string> = { notes_revision: "class notes revision" };
 
 /**
  * Today's automatic study plan. If the syllabus produced no plan for today yet,
@@ -60,19 +67,32 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
     onError: (e: Error) => toast.error(e.message),
   });
 
+  // Skip / cancel: the database refills the board with the next best task.
+  const setState = useMutation({
+    mutationFn: (v: { id: string; status: PlanItemState }) => setPlanItemState(v.id, v.status),
+    onSuccess: (_d, v) => {
+      qc.invalidateQueries({ queryKey: ["plan", planDate] });
+      toast.success(v.status === "skipped" ? "Task skipped — next one added" : "Task cancelled");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   // Auto-build today's plan exactly once when the day starts empty.
   useEffect(() => {
     if (plan.isSuccess && (plan.data?.length ?? 0) === 0 && regenerate.isIdle)
       regenerate.mutate();
   }, [plan.isSuccess, plan.data, regenerate]);
 
-  const items = plan.data ?? [];
+  const all = plan.data ?? [];
+  const items = visiblePlanItems(all);
+  const queued = all.filter((i) => i.status === "pending" && !i.completed_at).length;
   const rows = items.map((item) => {
     const minutes = planItemMinutes(item, sessions, since);
     return { item, minutes, status: planItemStatus(item, minutes) };
   });
   const doneCount = rows.filter((r) => r.status === "complete").length;
   const plannedMinutes = items.reduce((a, i) => a + i.target_minutes, 0);
+  const busy = setState.isPending;
 
   return (
     <section className="surface-card p-5 sm:p-6">
@@ -89,6 +109,7 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
               month: "short",
             })}{" "}
             · {doneCount}/{items.length} done · {fmtHM(plannedMinutes)} planned
+            {queued > PLAN_VISIBLE_LIMIT ? ` · ${queued - PLAN_VISIBLE_LIMIT} queued` : ""}
           </p>
         </div>
         <div className="ml-auto flex items-center gap-2">
@@ -124,18 +145,19 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
             return (
               <li
                 key={item.id}
-                className="flex items-center gap-3 rounded-2xl border border-border bg-panel p-3"
+                className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-border bg-panel p-3"
               >
                 <ActivityArtwork
                   kind={KIND_ART[item.session_kind] ?? "reading"}
                   className="size-11 shrink-0"
                 />
-                <div className="min-w-0 flex-1">
+                <div className="min-w-[8rem] flex-1 basis-40">
                   <p className="truncate text-sm font-bold">
                     {item.chapter_name ?? item.subject_name ?? "Focus block"}
                   </p>
-                  <p className="mt-0.5 text-xs font-semibold text-muted-foreground capitalize">
-                    {item.subject_name ? `${item.subject_name} · ` : ""}{item.session_kind} · {fmtHM(item.target_minutes)} target
+                  <p className="mt-0.5 truncate text-xs font-semibold text-muted-foreground capitalize">
+                    {item.subject_name ? `${item.subject_name} · ` : ""}
+                    {KIND_LABEL[item.session_kind] ?? item.session_kind} · min {fmtHM(item.target_minutes)}
                     {minutes > 0 ? ` · ${fmtHM(minutes)} done` : ""}
                   </p>
                   <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-muted">
@@ -145,25 +167,56 @@ export function DailyPlanCard({ sessions, title = "Your plan", onStart }: { sess
                     />
                   </span>
                 </div>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold ${style.cls}`}
-                >
-                  {style.label}
-                </span>
-                {onStart && status !== "complete" ? <button type="button" onClick={() => onStart(item)} aria-label={`Start ${item.chapter_name ?? item.subject_name ?? "plan item"}`} className="grid size-9 shrink-0 place-items-center rounded-full bg-foreground text-background"><Play className="size-4" aria-hidden="true" /></button> : null}
-                <button
-                  onClick={() =>
-                    toggle.mutate({ id: item.id, done: !item.completed_at })
-                  }
-                  aria-label={item.completed_at ? "Mark as pending" : "Mark as complete"}
-                  className={`grid size-9 shrink-0 place-items-center rounded-full border transition ${
-                    item.completed_at
-                      ? "border-transparent bg-foreground text-background"
-                      : "border-border text-muted-foreground"
-                  }`}
-                >
-                  <Check className="size-4" aria-hidden="true" />
-                </button>
+                <div className="ml-auto flex shrink-0 items-center gap-1.5">
+                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${style.cls}`}>
+                    {style.label}
+                  </span>
+                  {onStart && status !== "complete" ? (
+                    <button
+                      type="button"
+                      onClick={() => onStart(item)}
+                      aria-label={`Start ${item.chapter_name ?? item.subject_name ?? "plan item"}`}
+                      className="grid size-9 place-items-center rounded-full bg-foreground text-background"
+                    >
+                      <Play className="size-4" aria-hidden="true" />
+                    </button>
+                  ) : null}
+                  {status !== "complete" ? (
+                    <>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => setState.mutate({ id: item.id, status: "skipped" })}
+                        aria-label="Skip this task for today"
+                        title="Skip"
+                        className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground disabled:opacity-50"
+                      >
+                        <SkipForward className="size-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => setState.mutate({ id: item.id, status: "cancelled" })}
+                        aria-label="Cancel this task"
+                        title="Cancel"
+                        className="grid size-9 place-items-center rounded-full border border-border text-muted-foreground disabled:opacity-50"
+                      >
+                        <X className="size-4" aria-hidden="true" />
+                      </button>
+                    </>
+                  ) : null}
+                  <button
+                    onClick={() => toggle.mutate({ id: item.id, done: !item.completed_at })}
+                    aria-label={item.completed_at ? "Mark as pending" : "Mark as complete"}
+                    className={`grid size-9 place-items-center rounded-full border transition ${
+                      item.completed_at
+                        ? "border-transparent bg-foreground text-background"
+                        : "border-border text-muted-foreground"
+                    }`}
+                  >
+                    <Check className="size-4" aria-hidden="true" />
+                  </button>
+                </div>
               </li>
             );
           })}

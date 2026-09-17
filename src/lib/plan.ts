@@ -1,6 +1,9 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, Subject } from "@/lib/study";
 
+/** How many plan tasks are shown on the board at once. */
+export const PLAN_VISIBLE_LIMIT = 8;
+
 /** One row of the automatic daily study plan. */
 export type PlanItem = {
   id: string;
@@ -20,8 +23,12 @@ export type PlanItem = {
   next_review_at: string | null;
   scheduled_start: string | null;
   scheduled_end: string | null;
+  status: PlanItemState;
+  rank_score: number;
+  class_id: string | null;
 };
 
+export type PlanItemState = "pending" | "skipped" | "cancelled";
 export type PlanStatus = "complete" | "progress" | "pending";
 
 /** Local (not UTC) yyyy-mm-dd, so plans line up with the student's day. */
@@ -31,16 +38,51 @@ export function localDateKey(d = new Date()) {
   ).padStart(2, "0")}`;
 }
 
+const PLAN_COLUMNS =
+  "id, plan_date, subject_id, chapter_id, subtopic_id, subject_name, chapter_name, session_kind, target_minutes, priority, source, pinned, completed_at, review_stage, next_review_at, scheduled_start, scheduled_end, status, rank_score, class_id";
+
 export async function fetchPlan(planDate = localDateKey()): Promise<PlanItem[]> {
   const { data, error } = await supabase
     .from("daily_study_plan_items")
-    .select(
-      "id, plan_date, subject_id, chapter_id, subtopic_id, subject_name, chapter_name, session_kind, target_minutes, priority, source, pinned, completed_at, review_stage, next_review_at, scheduled_start, scheduled_end",
-    )
+    .select(PLAN_COLUMNS)
     .eq("plan_date", planDate)
     .order("priority", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as PlanItem[];
+  return (data ?? []) as unknown as PlanItem[];
+}
+
+/**
+ * Importance ranking: overdue revisions first, then class notes, then new
+ * reading. Completed rows sink to the bottom so the board self-adjusts.
+ */
+export function rankPlanItems(items: PlanItem[]): PlanItem[] {
+  const kindWeight: Record<string, number> = {
+    revision: 300,
+    notes_revision: 250,
+    practice: 180,
+    test: 180,
+    class: 150,
+    live: 150,
+    reading: 120,
+  };
+  const score = (i: PlanItem) => {
+    if (i.completed_at) return -1000;
+    let s = Number(i.rank_score ?? 0) + (kindWeight[i.session_kind] ?? 100);
+    if (i.pinned) s += 2000;
+    if (i.next_review_at) {
+      const overdueHours = (Date.now() - new Date(i.next_review_at).getTime()) / 3_600_000;
+      if (overdueHours > 0) s += Math.min(600, overdueHours * 2);
+    }
+    s += (i.review_stage ?? 0) * 15;
+    return s;
+  };
+  return [...items].sort((a, b) => score(b) - score(a));
+}
+
+/** The active board: never more than {@link PLAN_VISIBLE_LIMIT} live tasks. */
+export function visiblePlanItems(items: PlanItem[]): PlanItem[] {
+  const live = items.filter((i) => i.status === "pending" || i.completed_at);
+  return rankPlanItems(live).slice(0, PLAN_VISIBLE_LIMIT);
 }
 
 /** Ask the database to (re)build the plan for a date and return the new rows. */
@@ -55,6 +97,18 @@ export async function setPlanItemDone(id: string, done: boolean) {
     .from("daily_study_plan_items")
     .update({ completed_at: done ? new Date().toISOString() : null })
     .eq("id", id);
+  if (error) throw error;
+}
+
+/**
+ * Skip or cancel a task. The database marks it and immediately tops the board
+ * back up with the next most important task.
+ */
+export async function setPlanItemState(id: string, status: PlanItemState) {
+  const { error } = await supabase.rpc("set_plan_item_status", {
+    _item_id: id,
+    _status: status,
+  });
   if (error) throw error;
 }
 

@@ -18,6 +18,8 @@ import {
   updateAppSettings,
   type AppSettings,
 } from "@/lib/study";
+import { downloadJson, exportUserData, importUserData } from "@/lib/admin-export";
+import { AdminUserDrawer } from "@/components/admin/AdminUserDrawer";
 
 export function Sheet({
   title,
@@ -98,12 +100,48 @@ export function OverviewStats() {
 export function UsageInsights() {
   const users = useQuery({ queryKey: ["admin-users"], queryFn: () => fetchAdminUsers(100) });
   const [q, setQ] = useState("");
+  const [preview, setPreview] = useState<{ id: string; name: string } | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
 
   const list = (users.data ?? []).filter((u) =>
     q.trim()
       ? `${u.display_name ?? ""} ${u.email ?? ""}`.toLowerCase().includes(q.trim().toLowerCase())
       : true,
   );
+
+  const doExport = async (id: string, label: string) => {
+    setBusy(id);
+    try {
+      const payload = await exportUserData(id);
+      downloadJson(`chronodeck-${label.replace(/\W+/g, "-").toLowerCase()}.json`, payload);
+      sonner.success("History downloaded");
+    } catch (err) {
+      sonner.error((err as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const doImport = (id: string) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json";
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      setBusy(id);
+      try {
+        const payload = JSON.parse(await file.text()) as unknown;
+        const added = await importUserData(id, payload);
+        sonner.success(`Imported — ${added} subjects added`);
+      } catch (err) {
+        sonner.error((err as Error).message);
+      } finally {
+        setBusy(null);
+      }
+    };
+    input.click();
+  };
 
   return (
     <section className="rounded-3xl border border-border bg-panel p-4 sm:p-5">
@@ -169,10 +207,43 @@ export function UsageInsights() {
                 <option value="moderator">moderator</option>
                 <option value="admin">admin</option>
               </select>
+              <div className="mt-1 flex justify-end gap-1">
+                <button
+                  type="button"
+                  onClick={() => setPreview({ id: u.id, name: u.display_name ?? u.email ?? "User" })}
+                  className="rounded-full border border-border px-2 py-1 text-[10px] font-bold"
+                >
+                  Preview
+                </button>
+                <button
+                  type="button"
+                  disabled={busy === u.id}
+                  onClick={() => void doExport(u.id, u.display_name ?? u.email ?? u.id)}
+                  className="rounded-full border border-border px-2 py-1 text-[10px] font-bold disabled:opacity-50"
+                >
+                  Download
+                </button>
+                <button
+                  type="button"
+                  disabled={busy === u.id}
+                  onClick={() => doImport(u.id)}
+                  className="rounded-full border border-border px-2 py-1 text-[10px] font-bold disabled:opacity-50"
+                >
+                  Import
+                </button>
+              </div>
             </div>
           </li>
         ))}
       </ul>
+
+      {preview ? (
+        <AdminUserDrawer
+          userId={preview.id}
+          name={preview.name}
+          onClose={() => setPreview(null)}
+        />
+      ) : null}
     </section>
   );
 }
